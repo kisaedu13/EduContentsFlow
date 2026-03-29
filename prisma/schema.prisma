@@ -1,0 +1,194 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Auth & Users ───────────────────────────────────────
+
+model Profile {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  role      Role     @default(MEMBER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assignments PartAssignment[]
+
+  @@map("profiles")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+// ─── 워크플로우 템플릿 ──────────────────────────────────
+
+model WorkflowTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tracks   WorkflowTrack[]
+  projects Project[]
+
+  @@map("workflow_templates")
+}
+
+model WorkflowTrack {
+  id         String @id @default(cuid())
+  templateId String
+  name       String
+  sortOrder  Int
+
+  template WorkflowTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  phases   WorkflowPhase[]
+
+  @@map("workflow_tracks")
+}
+
+model WorkflowPhase {
+  id        String @id @default(cuid())
+  trackId   String
+  name      String
+  sortOrder Int
+
+  track WorkflowTrack @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@map("workflow_phases")
+}
+
+// ─── 프로젝트 ───────────────────────────────────────────
+
+model Project {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  status      ProjectStatus @default(PREPARING)
+  templateId  String?
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  template  WorkflowTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  tracks    ProjectTrack[]
+  parts     ProjectPart[]
+  @@map("projects")
+}
+
+enum ProjectStatus {
+  PREPARING
+  IN_PROGRESS
+  COMPLETED
+  ON_HOLD
+}
+
+model ProjectTrack {
+  id        String @id @default(cuid())
+  projectId String
+  name      String
+  sortOrder Int
+
+  project  Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  phases   ProjectPhase[]
+  progress PartProgress[]
+
+  @@unique([projectId, name])
+  @@map("project_tracks")
+}
+
+model ProjectPhase {
+  id        String @id @default(cuid())
+  trackId   String
+  name      String
+  sortOrder Int
+
+  track    ProjectTrack   @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  progress PartProgress[] @relation("currentPhase")
+
+  @@map("project_phases")
+}
+
+// ─── 프로젝트 파트 ──────────────────────────────────────
+
+model ProjectPart {
+  id             String   @id @default(cuid())
+  projectId      String
+  name           String
+  sortOrder      Int
+  designDuration Int?
+  finalDuration  Int?
+  hasPt          Boolean  @default(true)
+  hasVideo       Boolean  @default(true)
+  startDate      DateTime?
+  endDate        DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  project     Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignments PartAssignment[]
+  progress    PartProgress[]
+
+  @@map("project_parts")
+}
+
+// ─── 파트 배정 ──────────────────────────────────────────
+
+model PartAssignment {
+  id         String         @id @default(cuid())
+  partId     String
+  profileId  String
+  role       AssignmentRole @default(PRIMARY)
+  discipline Discipline
+
+  part    ProjectPart @relation(fields: [partId], references: [id], onDelete: Cascade)
+  profile Profile     @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([partId, profileId, discipline])
+  @@map("part_assignments")
+}
+
+enum AssignmentRole {
+  PRIMARY
+  SECONDARY
+}
+
+enum Discipline {
+  PT
+  VIDEO
+}
+
+// ─── 파트 진행상황 (★ 핵심 테이블) ──────────────────────
+
+model PartProgress {
+  id             String         @id @default(cuid())
+  partId         String
+  trackId        String
+  currentPhaseId String?
+  status         ProgressStatus @default(NOT_STARTED)
+  note           String?
+  updatedAt      DateTime       @updatedAt
+
+  part  ProjectPart   @relation(fields: [partId], references: [id], onDelete: Cascade)
+  track ProjectTrack  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  phase ProjectPhase? @relation("currentPhase", fields: [currentPhaseId], references: [id], onDelete: SetNull)
+
+  @@unique([partId, trackId])
+  @@map("part_progress")
+}
+
+enum ProgressStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  BLOCKED
+}
+
