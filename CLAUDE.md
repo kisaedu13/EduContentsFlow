@@ -40,6 +40,18 @@
 - **Vercel**: https://edu-contents-flow.vercel.app
 - **GitHub**: https://github.com/kisaedu13/EduContentsFlow
 - GitHub push 시 Vercel 자동 배포
+- Vercel 함수 리전: `hnd1` (도쿄) — vercel.json
+
+## 성능 최적화 패턴
+- **인증**: 미들웨어는 `getSession()` (JWT 쿠키, 네트워크 호출 없음), 서버 액션은 `getVerifiedProfile()` (`getUser()` 서버 검증)
+- **페이지 렌더링**: `getCurrentProfile()`은 `getSession()` + `unstable_cache` 프로필 캐싱 (60초)
+- **레이아웃**: Suspense로 사이드바 감싸서 페이지 렌더링 비블로킹
+- **loading.tsx**: 주요 라우트에 스켈레톤 UI (dashboard, projects, projects/[id], templates)
+- **쿼리 병렬화**: `Promise.all`로 독립 쿼리 동시 실행 (dashboard, project detail)
+- **데이터 캐싱**: `unstable_cache`로 대시보드/프로젝트 목록 10초 캐싱
+- **프리페치**: 사이드바/프로젝트 카드 Link에 `prefetch={false}` (불필요한 RSC 요청 차단)
+- **Optimistic UI**: `useOptimistic`(announcement-board), `useState` 낙관적 업데이트 (task-table, project-status-selector)
+- **router.refresh() 금지**: 서버 액션의 `revalidatePath()`가 캐시 갱신 처리
 
 ## 도메인별 가이드
 - `src/components/CLAUDE.md` — 프론트엔드 컴포넌트 패턴
