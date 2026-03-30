@@ -25,13 +25,15 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
+  // getSession()은 JWT 쿠키만 읽음 (네트워크 호출 없음, ~0ms)
+  // 실제 토큰 검증은 서버 컴포넌트의 getCurrentProfile()에서 getUser()로 수행
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
   // 비인증 사용자가 대시보드에 접근하면 로그인으로 리다이렉트
   if (
-    !user &&
+    !session &&
     !request.nextUrl.pathname.startsWith("/login") &&
     !request.nextUrl.pathname.startsWith("/auth")
   ) {
@@ -41,7 +43,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // 인증된 사용자가 로그인에 접근하면 대시보드로 리다이렉트
-  if (user && request.nextUrl.pathname.startsWith("/login")) {
+  if (session && request.nextUrl.pathname.startsWith("/login")) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
