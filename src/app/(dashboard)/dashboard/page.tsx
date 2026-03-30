@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { format } from "date-fns";
+import { unstable_cache } from "next/cache";
 import {
   FolderKanban,
   PlayCircle,
@@ -19,28 +20,39 @@ import {
 } from "@/lib/constants";
 import type { TaskStatus } from "@/generated/prisma/client";
 
+const getDashboardData = unstable_cache(
+  async () => {
+    const [projectStatusCounts, taskCounts, recentTasks] = await Promise.all([
+      prisma.project.groupBy({
+        by: ["status"],
+        _count: { _all: true },
+      }),
+      prisma.task.groupBy({
+        by: ["status"],
+        _count: { _all: true },
+      }),
+      prisma.task.findMany({
+        where: {
+          project: { status: { in: ["PREPARING", "IN_PROGRESS"] } },
+        },
+        include: {
+          project: { select: { id: true, name: true } },
+          assignee: { select: { name: true } },
+        },
+        orderBy: { updatedAt: "desc" },
+        take: 8,
+      }),
+    ]);
+    return { projectStatusCounts, taskCounts, recentTasks };
+  },
+  ["dashboard-data"],
+  { revalidate: 10 },
+);
+
 export default async function DashboardPage() {
-  const [profile, projectStatusCounts, taskCounts, recentTasks] = await Promise.all([
+  const [profile, { projectStatusCounts, taskCounts, recentTasks }] = await Promise.all([
     getCurrentProfile(),
-    prisma.project.groupBy({
-      by: ["status"],
-      _count: { _all: true },
-    }),
-    prisma.task.groupBy({
-      by: ["status"],
-      _count: { _all: true },
-    }),
-    prisma.task.findMany({
-      where: {
-        project: { status: { in: ["PREPARING", "IN_PROGRESS"] } },
-      },
-      include: {
-        project: { select: { id: true, name: true } },
-        assignee: { select: { name: true } },
-      },
-      orderBy: { updatedAt: "desc" },
-      take: 8,
-    }),
+    getDashboardData(),
   ]);
 
   const statusCounts = {

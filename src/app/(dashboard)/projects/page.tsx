@@ -1,20 +1,30 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { unstable_cache } from "next/cache";
 import { getCurrentProfile } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Header } from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
 import { ProjectCard } from "./project-card";
 
-export default async function ProjectsPage() {
-  const profile = await getCurrentProfile();
+const getProjectList = unstable_cache(
+  async () => {
+    return prisma.project.findMany({
+      include: {
+        _count: { select: { tasks: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  },
+  ["project-list"],
+  { revalidate: 10 },
+);
 
-  const projects = await prisma.project.findMany({
-    include: {
-      _count: { select: { tasks: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+export default async function ProjectsPage() {
+  const [profile, projects] = await Promise.all([
+    getCurrentProfile(),
+    getProjectList(),
+  ]);
 
   const isAdmin = profile.role === "ADMIN";
 

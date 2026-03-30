@@ -64,6 +64,7 @@ export async function createTask(
     });
 
     revalidatePath(`/projects/${projectId}`);
+
     return { success: true, data: { id: task.id } };
   } catch {
     return { error: "업무 생성에 실패했습니다" };
@@ -102,6 +103,7 @@ export async function updateTask(
     });
 
     revalidatePath(`/projects/${task.projectId}`);
+
     return { success: true, data: { id: task.id } };
   } catch {
     return { error: "업무 수정에 실패했습니다" };
@@ -179,6 +181,7 @@ export async function deleteTask(taskId: string): Promise<ActionResult> {
     await prisma.task.delete({ where: { id: taskId } });
 
     revalidatePath(`/projects/${task.projectId}`);
+
     return { success: true, data: null };
   } catch {
     return { error: "업무 삭제에 실패했습니다" };

@@ -79,6 +79,7 @@ export async function createProject(
     });
 
     revalidatePath("/projects");
+
     return { success: true, data: { id: project.id } };
   } catch {
     return { error: "프로젝트 생성에 실패했습니다" };
@@ -110,6 +111,7 @@ export async function updateProject(
     });
 
     revalidatePath(`/projects/${id}`);
+
     return { success: true, data: { id } };
   } catch {
     return { error: "프로젝트 수정에 실패했습니다" };
@@ -124,6 +126,7 @@ export async function deleteProject(id: string): Promise<ActionResult> {
     await prisma.project.delete({ where: { id } });
 
     revalidatePath("/projects");
+
     return { success: true, data: null };
   } catch {
     return { error: "프로젝트 삭제에 실패했습니다" };

@@ -62,7 +62,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
               {visibleItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
-                    render={<Link href={item.href} />}
+                    render={<Link href={item.href} prefetch={false} />}
                     isActive={pathname.startsWith(item.href)}
                   >
                     <item.icon className="size-4" />
