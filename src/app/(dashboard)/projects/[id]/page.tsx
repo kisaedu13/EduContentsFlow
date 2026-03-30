@@ -15,35 +15,37 @@ export default async function ProjectDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const profile = await getCurrentProfile();
   const { id } = await params;
 
-  const project = await prisma.project.findUnique({
-    where: { id },
-    include: {
-      template: { select: { name: true } },
-      tasks: {
-        include: {
-          assignee: { select: { name: true } },
+  const [profile, project, profiles] = await Promise.all([
+    getCurrentProfile(),
+    prisma.project.findUnique({
+      where: { id },
+      include: {
+        template: { select: { name: true } },
+        tasks: {
+          include: {
+            assignee: { select: { name: true } },
+          },
+          orderBy: [{ depth: "asc" }, { sortOrder: "asc" }],
         },
-        orderBy: [{ depth: "asc" }, { sortOrder: "asc" }],
-      },
-      announcements: {
-        include: {
-          author: { select: { id: true, name: true } },
+        announcements: {
+          include: {
+            author: { select: { id: true, name: true } },
+          },
+          orderBy: { createdAt: "desc" },
         },
-        orderBy: { createdAt: "desc" },
       },
-    },
-  });
+    }),
+    prisma.profile.findMany({
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
+  ]);
 
   if (!project) notFound();
 
   const isAdmin = profile.role === "ADMIN";
-  const profiles = await prisma.profile.findMany({
-    select: { id: true, name: true },
-    orderBy: { name: "asc" },
-  });
 
   // Task 데이터를 직렬화
   const tasks = project.tasks.map((t) => ({

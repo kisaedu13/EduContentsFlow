@@ -20,43 +20,53 @@ import {
 import type { TaskStatus } from "@/generated/prisma/client";
 
 export default async function DashboardPage() {
-  const profile = await getCurrentProfile();
-
-  // 프로젝트 통계
-  const projects = await prisma.project.findMany({
-    include: {
-      tasks: { select: { status: true } },
-    },
-  });
+  const [profile, projectStatusCounts, taskCounts, recentTasks] = await Promise.all([
+    getCurrentProfile(),
+    prisma.project.groupBy({
+      by: ["status"],
+      _count: { _all: true },
+    }),
+    prisma.task.groupBy({
+      by: ["status"],
+      _count: { _all: true },
+    }),
+    prisma.task.findMany({
+      where: {
+        project: { status: { in: ["PREPARING", "IN_PROGRESS"] } },
+      },
+      include: {
+        project: { select: { id: true, name: true } },
+        assignee: { select: { name: true } },
+      },
+      orderBy: { updatedAt: "desc" },
+      take: 8,
+    }),
+  ]);
 
   const statusCounts = {
-    PREPARING: projects.filter((p) => p.status === "PREPARING").length,
-    IN_PROGRESS: projects.filter((p) => p.status === "IN_PROGRESS").length,
-    COMPLETED: projects.filter((p) => p.status === "COMPLETED").length,
-    ON_HOLD: projects.filter((p) => p.status === "ON_HOLD").length,
+    PREPARING: 0,
+    IN_PROGRESS: 0,
+    COMPLETED: 0,
+    ON_HOLD: 0,
   };
+  let totalProjects = 0;
+  for (const row of projectStatusCounts) {
+    statusCounts[row.status as keyof typeof statusCounts] = row._count._all;
+    totalProjects += row._count._all;
+  }
 
-  const allTasks = projects.flatMap((p) => p.tasks);
-  const completedTasks = allTasks.filter((t) => t.status === "COMPLETE").length;
-  const overallPercent = allTasks.length > 0
-    ? Math.round((completedTasks / allTasks.length) * 100)
+  let totalTasks = 0;
+  let completedTasks = 0;
+  for (const row of taskCounts) {
+    totalTasks += row._count._all;
+    if (row.status === "COMPLETE") completedTasks = row._count._all;
+  }
+  const overallPercent = totalTasks > 0
+    ? Math.round((completedTasks / totalTasks) * 100)
     : 0;
 
-  // 최근 업데이트된 업무
-  const recentTasks = await prisma.task.findMany({
-    where: {
-      project: { status: { in: ["PREPARING", "IN_PROGRESS"] } },
-    },
-    include: {
-      project: { select: { id: true, name: true } },
-      assignee: { select: { name: true } },
-    },
-    orderBy: { updatedAt: "desc" },
-    take: 8,
-  });
-
   const statCards = [
-    { label: "전체 프로젝트", value: projects.length, icon: FolderKanban, color: "text-foreground" },
+    { label: "전체 프로젝트", value: totalProjects, icon: FolderKanban, color: "text-foreground" },
     { label: "진행중", value: statusCounts.IN_PROGRESS, icon: PlayCircle, color: "text-blue-500" },
     { label: "완료", value: statusCounts.COMPLETED, icon: CheckCircle2, color: "text-green-500" },
     { label: "보류", value: statusCounts.ON_HOLD, icon: PauseCircle, color: "text-gray-400" },
@@ -110,7 +120,7 @@ export default async function DashboardPage() {
               </span>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              전체 {allTasks.length}개 업무 중 {completedTasks}개 완료
+              전체 {totalTasks}개 업무 중 {completedTasks}개 완료
             </p>
           </CardContent>
         </Card>
