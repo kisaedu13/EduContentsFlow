@@ -69,7 +69,6 @@ export function ProjectForm({ templates, projectId, initialData }: ProjectFormPr
     }
 
     router.push(isEdit ? `/projects/${projectId}` : `/projects/${result.data.id}`);
-    router.refresh();
   }
 
   const selectedTemplate = templates?.find((t) => t.id === templateId);

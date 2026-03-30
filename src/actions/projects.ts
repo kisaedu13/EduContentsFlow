@@ -109,7 +109,6 @@ export async function updateProject(
       },
     });
 
-    revalidatePath("/projects");
     revalidatePath(`/projects/${id}`);
     return { success: true, data: { id } };
   } catch {

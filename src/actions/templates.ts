@@ -117,7 +117,6 @@ export async function updateTemplate(
       await createTasks(tasks as TaskItem[], null, 0);
     });
 
-    revalidatePath("/templates");
     revalidatePath(`/templates/${id}`);
     return { success: true, data: { id } };
   } catch {

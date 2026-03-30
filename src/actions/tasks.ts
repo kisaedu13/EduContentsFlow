@@ -160,7 +160,6 @@ export async function replaceProjectTasks(
     });
 
     revalidatePath(`/projects/${projectId}`);
-    revalidatePath(`/projects/${projectId}/edit`);
     return { success: true, data: null };
   } catch {
     return { error: "업무 구조 저장에 실패했습니다" };

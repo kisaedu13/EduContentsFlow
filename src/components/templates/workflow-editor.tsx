@@ -124,7 +124,6 @@ export function WorkflowEditor({ templateId, initialData }: WorkflowEditorProps)
     }
 
     router.push("/templates");
-    router.refresh();
   }
 
   const flatList = flattenTasks(tasks);

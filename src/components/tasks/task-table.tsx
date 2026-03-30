@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { TaskRow, type TaskData } from "./task-row";
 import { AddTaskRow } from "./add-task-row";
 import { createTask, updateTask, deleteTask } from "@/actions/tasks";
@@ -61,7 +60,6 @@ function hasChildTasks(taskId: string, allTasks: RawTask[]): boolean {
 let tempIdCounter = 0;
 
 export function TaskTable({ projectId, tasks: serverTasks, profiles }: TaskTableProps) {
-  const router = useRouter();
   const [, startTransition] = useTransition();
   const [tasks, setTasks] = useState<RawTask[]>(serverTasks);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set(serverTasks.map((t) => t.id)));
@@ -141,8 +139,10 @@ export function TaskTable({ projectId, tasks: serverTasks, profiles }: TaskTable
       { id: tempId, parentId: null, name, status: "WAITING", assigneeId: null, startDate: null, endDate: null, progress: 0, depth: 0, sortOrder: maxSort + 1, assignee: null },
     ]);
     startTransition(async () => {
-      await createTask({ projectId, name, parentId: null });
-      router.refresh();
+      const result = await createTask({ projectId, name, parentId: null });
+      if ("success" in result) {
+        setTasks((prev) => prev.map((t) => (t.id === tempId ? { ...t, id: result.data.id } : t)));
+      }
     });
   }
 
@@ -162,8 +162,10 @@ export function TaskTable({ projectId, tasks: serverTasks, profiles }: TaskTable
     ]);
     setExpandedIds((prev) => new Set(prev).add(parentId));
     startTransition(async () => {
-      await createTask({ projectId, name, parentId });
-      router.refresh();
+      const result = await createTask({ projectId, name, parentId });
+      if ("success" in result) {
+        setTasks((prev) => prev.map((t) => (t.id === tempId ? { ...t, id: result.data.id } : t)));
+      }
     });
   }
 
@@ -184,8 +186,10 @@ export function TaskTable({ projectId, tasks: serverTasks, profiles }: TaskTable
       { id: tempId, parentId, name: newName, status: "WAITING", assigneeId: null, startDate: null, endDate: null, progress: 0, depth: task?.depth ?? 0, sortOrder: maxSort + 1, assignee: null },
     ]);
     startTransition(async () => {
-      await createTask({ projectId, name: newName, parentId });
-      router.refresh();
+      const result = await createTask({ projectId, name: newName, parentId });
+      if ("success" in result) {
+        setTasks((prev) => prev.map((t) => (t.id === tempId ? { ...t, id: result.data.id } : t)));
+      }
     });
   }
 

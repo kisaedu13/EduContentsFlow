@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useOptimistic, useTransition } from "react";
 import { format } from "date-fns";
 import { Trash2, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,34 +21,66 @@ interface AnnouncementBoardProps {
   projectId: string;
   announcements: AnnouncementData[];
   currentUserId: string;
+  currentUserName: string;
   isAdmin: boolean;
 }
+
+type OptimisticAction =
+  | { type: "add"; announcement: AnnouncementData }
+  | { type: "delete"; id: string };
 
 export function AnnouncementBoard({
   projectId,
   announcements,
   currentUserId,
+  currentUserName,
   isAdmin,
 }: AnnouncementBoardProps) {
-  const router = useRouter();
+  const [, startTransition] = useTransition();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  const [optimisticAnnouncements, dispatchOptimistic] = useOptimistic(
+    announcements,
+    (state: AnnouncementData[], action: OptimisticAction) => {
+      if (action.type === "add") return [action.announcement, ...state];
+      if (action.type === "delete") return state.filter((a) => a.id !== action.id);
+      return state;
+    },
+  );
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim() || !content.trim()) return;
+    const trimmedTitle = title.trim();
+    const trimmedContent = content.trim();
     setSubmitting(true);
-    await createAnnouncement({ projectId, title: title.trim(), content: content.trim() });
     setTitle("");
     setContent("");
-    setSubmitting(false);
-    router.refresh();
+
+    startTransition(async () => {
+      dispatchOptimistic({
+        type: "add",
+        announcement: {
+          id: `temp-${Date.now()}`,
+          title: trimmedTitle,
+          content: trimmedContent,
+          authorName: currentUserName,
+          authorId: currentUserId,
+          createdAt: new Date().toISOString(),
+        },
+      });
+      await createAnnouncement({ projectId, title: trimmedTitle, content: trimmedContent });
+      setSubmitting(false);
+    });
   }
 
-  async function handleDelete(id: string) {
-    await deleteAnnouncement(id);
-    router.refresh();
+  function handleDelete(id: string) {
+    startTransition(async () => {
+      dispatchOptimistic({ type: "delete", id });
+      await deleteAnnouncement(id);
+    });
   }
 
   return (
@@ -77,15 +108,15 @@ export function AnnouncementBoard({
       </form>
 
       {/* 공지 목록 */}
-      {announcements.length === 0 ? (
+      {optimisticAnnouncements.length === 0 ? (
         <div className="py-12 text-center text-muted-foreground text-sm">
           <Megaphone className="size-8 mx-auto mb-2 opacity-40" />
           아직 공지사항이 없습니다.
         </div>
       ) : (
         <div className="space-y-3">
-          {announcements.map((a) => (
-            <div key={a.id} className="rounded-lg border p-4 space-y-2">
+          {optimisticAnnouncements.map((a) => (
+            <div key={a.id} className={`rounded-lg border p-4 space-y-2 ${a.id.startsWith("temp-") ? "opacity-70" : ""}`}>
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <h4 className="font-medium text-sm">{a.title}</h4>
@@ -93,7 +124,7 @@ export function AnnouncementBoard({
                     {a.authorName} &middot; {format(new Date(a.createdAt), "yyyy.MM.dd HH:mm")}
                   </p>
                 </div>
-                {(isAdmin || currentUserId === a.authorId) && (
+                {(isAdmin || currentUserId === a.authorId) && !a.id.startsWith("temp-") && (
                   <button
                     type="button"
                     onClick={() => handleDelete(a.id)}

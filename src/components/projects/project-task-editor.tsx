@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Plus, X, ChevronRight, ChevronDown, CornerDownRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,7 +17,6 @@ interface ProjectTaskEditorProps {
 }
 
 export function ProjectTaskEditor({ projectId, initialTasks }: ProjectTaskEditorProps) {
-  const router = useRouter();
   const [tasks, setTasks] = useState<TaskItem[]>(
     initialTasks.length > 0 ? initialTasks : [{ name: "", children: [] }],
   );
@@ -102,7 +100,6 @@ export function ProjectTaskEditor({ projectId, initialTasks }: ProjectTaskEditor
     }
 
     setSaving(false);
-    router.refresh();
   }
 
   const flatList = flattenTasks(tasks);

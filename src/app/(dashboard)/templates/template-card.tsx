@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { deleteTemplate } from "@/actions/templates";
 import {
@@ -36,7 +35,6 @@ interface TemplateCardProps {
 }
 
 export function TemplateCard({ template }: TemplateCardProps) {
-  const router = useRouter();
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,7 +46,7 @@ export function TemplateCard({ template }: TemplateCardProps) {
       setError(result.error);
       setDeleting(false);
     } else {
-      router.refresh();
+      // revalidatePath in server action handles cache update
     }
   }
 

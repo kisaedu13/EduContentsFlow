@@ -121,6 +121,7 @@ export default async function ProjectDetailPage({
           announcements={announcements}
           profiles={profiles}
           currentUserId={profile.id}
+          currentUserName={profile.name}
           isAdmin={isAdmin}
           ganttChart={
             <TaskGanttChart tasks={tasks} />

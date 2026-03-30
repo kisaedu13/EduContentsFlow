@@ -39,6 +39,7 @@ interface ProjectTabsProps {
   announcements: AnnouncementData[];
   profiles: Profile[];
   currentUserId: string;
+  currentUserName: string;
   isAdmin: boolean;
   ganttChart: React.ReactNode;
 }
@@ -49,6 +50,7 @@ export function ProjectTabs({
   announcements,
   profiles,
   currentUserId,
+  currentUserName,
   isAdmin,
   ganttChart,
 }: ProjectTabsProps) {
@@ -82,6 +84,7 @@ export function ProjectTabs({
           projectId={projectId}
           announcements={announcements}
           currentUserId={currentUserId}
+          currentUserName={currentUserName}
           isAdmin={isAdmin}
         />
       </TabsContent>
