@@ -28,7 +28,7 @@ export function LoginForm() {
 
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithPassword({
-      email,
+      email: `${email}@educontents.kr`,
       password,
     });
 
@@ -51,11 +51,11 @@ export function LoginForm() {
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">이메일</Label>
+            <Label htmlFor="email">아이디</Label>
             <Input
               id="email"
-              type="email"
-              placeholder="name@example.com"
+              type="text"
+              placeholder="아이디를 입력하세요"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

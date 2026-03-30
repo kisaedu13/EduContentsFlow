@@ -25,19 +25,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-interface Track {
-  id: string;
-  name: string;
-  phases: { id: string; name: string }[];
-}
-
 interface TemplateCardProps {
   template: {
     id: string;
     name: string;
     description: string | null;
-    tracks: Track[];
-    _count: { projects: number };
+    templateTasks: { id: string; name: string }[];
+    _count: { projects: number; templateTasks: number };
   };
 }
 
@@ -103,19 +97,22 @@ export function TemplateCard({ template }: TemplateCardProps) {
         </div>
       </CardHeader>
       <CardContent className="relative z-10">
-        <div className="space-y-1.5">
-          {template.tracks.map((track) => (
-            <div key={track.id} className="text-xs">
-              <span className="font-medium">{track.name}</span>
-              <span className="text-muted-foreground">
-                {" — "}
-                {track.phases.map((p) => p.name).join(" → ")}
+        <div className="text-xs text-muted-foreground">
+          {template._count.templateTasks > 0 ? (
+            <>
+              <span className="font-medium text-foreground">
+                {template.templateTasks.map((t) => t.name).join(", ")}
               </span>
-            </div>
-          ))}
+              {template._count.templateTasks > template.templateTasks.length && (
+                <span> 외 {template._count.templateTasks - template.templateTasks.length}개</span>
+              )}
+            </>
+          ) : (
+            <span>업무 없음</span>
+          )}
         </div>
         {template._count.projects > 0 && (
-          <p className="mt-3 text-xs text-muted-foreground">
+          <p className="mt-2 text-xs text-muted-foreground">
             {template._count.projects}개 프로젝트에서 사용 중
           </p>
         )}

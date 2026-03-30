@@ -6,19 +6,9 @@ import { getCurrentProfile } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Header } from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import {
-  PROJECT_STATUS_LABELS,
-  PROJECT_STATUS_COLORS,
-  PROGRESS_STATUS_LABELS,
-  PROGRESS_STATUS_COLORS,
-} from "@/lib/constants";
-import { PartList } from "./part-list";
-import { ProgressBoard } from "@/components/progress/progress-board";
-import { GanttChart } from "@/components/schedule/gantt-chart";
-import { getTimelineBounds } from "@/lib/week-utils";
-import { getAggregateStatus } from "@/lib/constants";
-import type { ProgressStatus } from "@/generated/prisma/client";
+import { ProjectTabs } from "./project-tabs";
+import { TaskGanttChart } from "@/components/tasks/task-gantt-chart";
+import { ProjectStatusSelector } from "@/components/projects/project-status-selector";
 
 export default async function ProjectDetailPage({
   params,
@@ -32,25 +22,17 @@ export default async function ProjectDetailPage({
     where: { id },
     include: {
       template: { select: { name: true } },
-      tracks: {
+      tasks: {
         include: {
-          phases: { orderBy: { sortOrder: "asc" } },
+          assignee: { select: { name: true } },
         },
-        orderBy: { sortOrder: "asc" },
+        orderBy: [{ depth: "asc" }, { sortOrder: "asc" }],
       },
-      parts: {
+      announcements: {
         include: {
-          progress: {
-            include: {
-              track: { select: { name: true } },
-              phase: { select: { name: true } },
-            },
-          },
-          assignments: {
-            include: { profile: { select: { name: true } } },
-          },
+          author: { select: { id: true, name: true } },
         },
-        orderBy: { sortOrder: "asc" },
+        orderBy: { createdAt: "desc" },
       },
     },
   });
@@ -58,11 +40,39 @@ export default async function ProjectDetailPage({
   if (!project) notFound();
 
   const isAdmin = profile.role === "ADMIN";
+  const profiles = await prisma.profile.findMany({
+    select: { id: true, name: true },
+    orderBy: { name: "asc" },
+  });
 
-  // 진행 현황 요약
-  const totalProgress = project.parts.flatMap((p) => p.progress);
-  const completedCount = totalProgress.filter((p) => p.status === "COMPLETED").length;
-  const totalCount = totalProgress.length;
+  // Task 데이터를 직렬화
+  const tasks = project.tasks.map((t) => ({
+    id: t.id,
+    parentId: t.parentId,
+    name: t.name,
+    status: t.status,
+    assigneeId: t.assigneeId,
+    startDate: t.startDate ? format(t.startDate, "yyyy-MM-dd") : null,
+    endDate: t.endDate ? format(t.endDate, "yyyy-MM-dd") : null,
+    progress: t.progress,
+    depth: t.depth,
+    sortOrder: t.sortOrder,
+    assignee: t.assignee,
+  }));
+
+  // 공지 데이터 직렬화
+  const announcements = project.announcements.map((a) => ({
+    id: a.id,
+    title: a.title,
+    content: a.content,
+    authorName: a.author.name,
+    authorId: a.author.id,
+    createdAt: a.createdAt.toISOString(),
+  }));
+
+  // 업무 통계
+  const totalTasks = tasks.length;
+  const completedTasks = tasks.filter((t) => t.status === "COMPLETE").length;
 
   return (
     <>
@@ -73,29 +83,25 @@ export default async function ProjectDetailPage({
           <div className="space-y-1">
             <div className="flex items-center gap-3">
               <h2 className="text-2xl font-bold">{project.name}</h2>
-              <span
-                className={cn(
-                  "rounded-full px-2.5 py-0.5 text-xs font-medium",
-                  PROJECT_STATUS_COLORS[project.status],
-                )}
-              >
-                {PROJECT_STATUS_LABELS[project.status]}
-              </span>
+              <ProjectStatusSelector
+                projectId={project.id}
+                status={project.status}
+                name={project.name}
+              />
             </div>
             {project.description && (
               <p className="text-sm text-muted-foreground">{project.description}</p>
             )}
             <div className="flex gap-4 text-xs text-muted-foreground">
-              {project.template && <span>템플릿: {project.template.name}</span>}
               {project.startDate && (
                 <span>
                   {format(project.startDate, "yyyy.MM.dd")}
                   {project.endDate && ` ~ ${format(project.endDate, "yyyy.MM.dd")}`}
                 </span>
               )}
-              {totalCount > 0 && (
+              {totalTasks > 0 && (
                 <span>
-                  진행률: {completedCount}/{totalCount} ({Math.round((completedCount / totalCount) * 100)}%)
+                  업무: {completedTasks}/{totalTasks} ({Math.round((completedTasks / totalTasks) * 100)}%)
                 </span>
               )}
             </div>
@@ -108,91 +114,17 @@ export default async function ProjectDetailPage({
           )}
         </div>
 
-        {/* 진행 보드 */}
-        {project.parts.length > 0 && (
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium">진행 보드</h3>
-            <ProgressBoard
-              projectId={project.id}
-              tracks={project.tracks.map((t) => ({
-                id: t.id,
-                name: t.name,
-                phases: t.phases.map((p) => ({
-                  id: p.id,
-                  name: p.name,
-                  sortOrder: p.sortOrder,
-                })),
-              }))}
-              parts={project.parts.map((part) => ({
-                id: part.id,
-                name: part.name,
-                progress: part.progress.map((p) => ({
-                  id: p.id,
-                  trackId: p.trackId,
-                  trackName: p.track.name,
-                  currentPhaseId: p.currentPhaseId,
-                  currentPhaseName: p.phase?.name ?? null,
-                  status: p.status,
-                  note: p.note,
-                })),
-              }))}
-            />
-          </div>
-        )}
-
-        {/* 간트 차트 */}
-        {project.parts.length > 0 && (() => {
-          const bounds = getTimelineBounds(
-            project.parts.map((p) => ({ startDate: p.startDate, endDate: p.endDate })),
-            project.startDate,
-            project.endDate,
-          );
-          return (
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium">일정</h3>
-              <GanttChart
-                projects={[{
-                  id: project.id,
-                  name: project.name,
-                  parts: project.parts.map((part) => ({
-                    id: part.id,
-                    name: part.name,
-                    startDate: part.startDate ? format(part.startDate, "yyyy-MM-dd") : null,
-                    endDate: part.endDate ? format(part.endDate, "yyyy-MM-dd") : null,
-                    progressStatus: getAggregateStatus(
-                      part.progress.map((p) => p.status as ProgressStatus),
-                    ),
-                  })),
-                }]}
-                timelineStart={format(bounds.start, "yyyy-MM-dd")}
-                timelineEnd={format(bounds.end, "yyyy-MM-dd")}
-              />
-            </div>
-          );
-        })()}
-
-        {/* 파트 목록 */}
-        <PartList
+        {/* 탭: 업무 / 일정 / 알림방 */}
+        <ProjectTabs
           projectId={project.id}
-          parts={project.parts.map((part) => ({
-            id: part.id,
-            name: part.name,
-            sortOrder: part.sortOrder,
-            hasPt: part.hasPt,
-            hasVideo: part.hasVideo,
-            designDuration: part.designDuration,
-            finalDuration: part.finalDuration,
-            progress: part.progress.map((p) => ({
-              trackName: p.track.name,
-              phaseName: p.phase?.name ?? null,
-              status: p.status,
-            })),
-            assignments: part.assignments.map((a) => ({
-              name: a.profile.name,
-              discipline: a.discipline,
-            })),
-          }))}
+          tasks={tasks}
+          announcements={announcements}
+          profiles={profiles}
+          currentUserId={profile.id}
           isAdmin={isAdmin}
+          ganttChart={
+            <TaskGanttChart tasks={tasks} />
+          }
         />
       </main>
     </>

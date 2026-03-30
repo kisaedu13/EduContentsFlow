@@ -11,8 +11,7 @@ export default async function ProjectsPage() {
 
   const projects = await prisma.project.findMany({
     include: {
-      template: { select: { name: true } },
-      _count: { select: { parts: true } },
+      _count: { select: { tasks: true } },
     },
     orderBy: { createdAt: "desc" },
   });

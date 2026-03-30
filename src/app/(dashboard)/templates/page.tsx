@@ -13,11 +13,11 @@ export default async function TemplatesPage() {
 
   const templates = await prisma.workflowTemplate.findMany({
     include: {
-      tracks: {
-        include: { phases: true },
+      templateTasks: {
+        where: { parentId: null },
         orderBy: { sortOrder: "asc" },
       },
-      _count: { select: { projects: true } },
+      _count: { select: { projects: true, templateTasks: true } },
     },
     orderBy: { createdAt: "desc" },
   });
@@ -28,7 +28,7 @@ export default async function TemplatesPage() {
       <main className="flex-1 p-6">
         <div className="mb-6 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            프로젝트 생성 시 사용할 워크플로우 템플릿을 관리합니다.
+            프로젝트 생성 시 사용할 업무 템플릿을 관리합니다.
           </p>
           <Button render={<Link href="/templates/new" />}>
             <Plus className="size-4" />

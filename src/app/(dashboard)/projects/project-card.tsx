@@ -21,8 +21,7 @@ interface ProjectCardProps {
     status: ProjectStatus;
     startDate: Date | null;
     endDate: Date | null;
-    template: { name: string } | null;
-    _count: { parts: number };
+    _count: { tasks: number };
   };
 }
 
@@ -50,10 +49,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-            {project.template && (
-              <span>템플릿: {project.template.name}</span>
-            )}
-            <span>파트: {project._count.parts}개</span>
+            <span>업무: {project._count.tasks}개</span>
             {project.startDate && (
               <span>
                 {format(project.startDate, "yyyy.MM.dd")}

@@ -13,14 +13,11 @@ import { PROJECT_STATUS_LABELS } from "@/lib/constants";
 interface Template {
   id: string;
   name: string;
-  tracks: {
-    name: string;
-    phases: { name: string }[];
-  }[];
+  taskCount: number;
 }
 
 interface ProjectFormProps {
-  templates: Template[];
+  templates?: Template[];
   projectId?: string;
   initialData?: {
     name: string;
@@ -44,8 +41,6 @@ export function ProjectForm({ templates, projectId, initialData }: ProjectFormPr
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const selectedTemplate = templates.find((t) => t.id === templateId);
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -62,7 +57,7 @@ export function ProjectForm({ templates, projectId, initialData }: ProjectFormPr
       : await createProject({
           name,
           description: description || undefined,
-          templateId,
+          templateId: templateId || undefined,
           startDate: startDate || undefined,
           endDate: endDate || undefined,
         });
@@ -76,6 +71,8 @@ export function ProjectForm({ templates, projectId, initialData }: ProjectFormPr
     router.push(isEdit ? `/projects/${projectId}` : `/projects/${result.data.id}`);
     router.refresh();
   }
+
+  const selectedTemplate = templates?.find((t) => t.id === templateId);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -102,32 +99,26 @@ export function ProjectForm({ templates, projectId, initialData }: ProjectFormPr
           />
         </div>
 
-        {!isEdit && (
+        {!isEdit && templates && templates.length > 0 && (
           <div className="space-y-2">
-            <Label htmlFor="template">워크플로우 템플릿</Label>
+            <Label htmlFor="template">업무 템플릿 (선택)</Label>
             <select
               id="template"
               value={templateId}
               onChange={(e) => setTemplateId(e.target.value)}
               className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              required
             >
-              <option value="">템플릿 선택...</option>
+              <option value="">템플릿 없이 생성</option>
               {templates.map((t) => (
                 <option key={t.id} value={t.id}>
-                  {t.name}
+                  {t.name} ({t.taskCount}개 업무)
                 </option>
               ))}
             </select>
             {selectedTemplate && (
-              <div className="rounded-md border bg-muted/50 p-3 text-xs">
-                {selectedTemplate.tracks.map((track) => (
-                  <div key={track.name}>
-                    <span className="font-medium">{track.name}:</span>{" "}
-                    {track.phases.map((p) => p.name).join(" → ")}
-                  </div>
-                ))}
-              </div>
+              <p className="text-xs text-muted-foreground">
+                선택한 템플릿의 업무 구조가 프로젝트에 복사됩니다.
+              </p>
             )}
           </div>
         )}

@@ -5,26 +5,28 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getCurrentProfile } from "@/lib/auth";
 
-const PhaseSchema = z.object({
-  name: z.string().min(1, "단계 이름을 입력하세요"),
-  sortOrder: z.number(),
-});
+type ActionResult<T = unknown> =
+  | { success: true; data: T }
+  | { error: string };
 
-const TrackSchema = z.object({
-  name: z.string().min(1, "트랙 이름을 입력하세요"),
-  sortOrder: z.number(),
-  phases: z.array(PhaseSchema).min(1, "최소 1개 단계가 필요합니다"),
-});
+// 재귀적 업무 구조
+const TaskItemSchema: z.ZodType<{
+  name: string;
+  children: { name: string; children: unknown[] }[];
+}> = z.lazy(() =>
+  z.object({
+    name: z.string().min(1, "업무 이름을 입력하세요"),
+    children: z.array(TaskItemSchema).default([]),
+  }),
+);
 
 const TemplateSchema = z.object({
   name: z.string().min(1, "템플릿 이름을 입력하세요"),
   description: z.string().optional(),
-  tracks: z.array(TrackSchema).min(1, "최소 1개 트랙이 필요합니다"),
+  tasks: z.array(TaskItemSchema).min(1, "최소 1개 업무가 필요합니다"),
 });
 
-type ActionResult<T = unknown> =
-  | { success: true; data: T }
-  | { error: string };
+type TaskItem = z.infer<typeof TaskItemSchema>;
 
 export async function createTemplate(
   input: z.input<typeof TemplateSchema>,
@@ -36,25 +38,33 @@ export async function createTemplate(
     const parsed = TemplateSchema.safeParse(input);
     if (!parsed.success) return { error: parsed.error.issues[0].message };
 
-    const { name, description, tracks } = parsed.data;
+    const { name, description, tasks } = parsed.data;
 
-    const template = await prisma.workflowTemplate.create({
-      data: {
-        name,
-        description: description || null,
-        tracks: {
-          create: tracks.map((track) => ({
-            name: track.name,
-            sortOrder: track.sortOrder,
-            phases: {
-              create: track.phases.map((phase) => ({
-                name: phase.name,
-                sortOrder: phase.sortOrder,
-              })),
+    const template = await prisma.$transaction(async (tx) => {
+      const tmpl = await tx.workflowTemplate.create({
+        data: { name, description: description || null },
+      });
+
+      async function createTasks(items: TaskItem[], parentId: string | null, depth: number) {
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          const task = await tx.templateTask.create({
+            data: {
+              templateId: tmpl.id,
+              parentId,
+              name: item.name,
+              sortOrder: i,
+              depth,
             },
-          })),
-        },
-      },
+          });
+          if (item.children.length > 0) {
+            await createTasks(item.children as TaskItem[], task.id, depth + 1);
+          }
+        }
+      }
+
+      await createTasks(tasks as TaskItem[], null, 0);
+      return tmpl;
     });
 
     revalidatePath("/templates");
@@ -75,31 +85,36 @@ export async function updateTemplate(
     const parsed = TemplateSchema.safeParse(input);
     if (!parsed.success) return { error: parsed.error.issues[0].message };
 
-    const { name, description, tracks } = parsed.data;
+    const { name, description, tasks } = parsed.data;
 
     await prisma.$transaction(async (tx) => {
-      // 기존 트랙/단계 삭제 후 새로 생성 (단순한 접근)
-      await tx.workflowTrack.deleteMany({ where: { templateId: id } });
+      // 기존 템플릿 업무 삭제 후 새로 생성
+      await tx.templateTask.deleteMany({ where: { templateId: id } });
 
       await tx.workflowTemplate.update({
         where: { id },
-        data: {
-          name,
-          description: description || null,
-          tracks: {
-            create: tracks.map((track) => ({
-              name: track.name,
-              sortOrder: track.sortOrder,
-              phases: {
-                create: track.phases.map((phase) => ({
-                  name: phase.name,
-                  sortOrder: phase.sortOrder,
-                })),
-              },
-            })),
-          },
-        },
+        data: { name, description: description || null },
       });
+
+      async function createTasks(items: TaskItem[], parentId: string | null, depth: number) {
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          const task = await tx.templateTask.create({
+            data: {
+              templateId: id,
+              parentId,
+              name: item.name,
+              sortOrder: i,
+              depth,
+            },
+          });
+          if (item.children.length > 0) {
+            await createTasks(item.children as TaskItem[], task.id, depth + 1);
+          }
+        }
+      }
+
+      await createTasks(tasks as TaskItem[], null, 0);
     });
 
     revalidatePath("/templates");
@@ -117,7 +132,6 @@ export async function deleteTemplate(
     const profile = await getCurrentProfile();
     if (profile.role !== "ADMIN") return { error: "권한이 없습니다" };
 
-    // 이 템플릿을 사용 중인 프로젝트가 있는지 확인
     const projectCount = await prisma.project.count({
       where: { templateId: id },
     });

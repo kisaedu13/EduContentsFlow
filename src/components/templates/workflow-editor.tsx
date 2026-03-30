@@ -2,23 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, X, GripVertical } from "lucide-react";
+import { Plus, X, ChevronRight, ChevronDown, CornerDownRight } from "lucide-react";
 import { createTemplate, updateTemplate } from "@/actions/templates";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface Phase {
+interface TaskItem {
   name: string;
-  sortOrder: number;
-}
-
-interface Track {
-  name: string;
-  sortOrder: number;
-  phases: Phase[];
+  children: TaskItem[];
 }
 
 interface WorkflowEditorProps {
@@ -26,11 +19,7 @@ interface WorkflowEditorProps {
   initialData?: {
     name: string;
     description: string | null;
-    tracks: {
-      name: string;
-      sortOrder: number;
-      phases: { name: string; sortOrder: number }[];
-    }[];
+    tasks: TaskItem[];
   };
 }
 
@@ -38,71 +27,83 @@ export function WorkflowEditor({ templateId, initialData }: WorkflowEditorProps)
   const router = useRouter();
   const [name, setName] = useState(initialData?.name ?? "");
   const [description, setDescription] = useState(initialData?.description ?? "");
-  const [tracks, setTracks] = useState<Track[]>(
-    initialData?.tracks ?? [
-      { name: "", sortOrder: 0, phases: [{ name: "", sortOrder: 0 }] },
-    ],
+  const [tasks, setTasks] = useState<TaskItem[]>(
+    initialData?.tasks ?? [{ name: "", children: [] }],
   );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function addTrack() {
-    setTracks([
-      ...tracks,
-      {
-        name: "",
-        sortOrder: tracks.length,
-        phases: [{ name: "", sortOrder: 0 }],
-      },
-    ]);
+  // 재귀적으로 플랫 리스트 만들기 (렌더링용)
+  type FlatItem = { path: number[]; item: TaskItem; depth: number; hasChildren: boolean };
+
+  function flattenTasks(items: TaskItem[], parentPath: number[] = []): FlatItem[] {
+    const result: FlatItem[] = [];
+    items.forEach((item, idx) => {
+      const path = [...parentPath, idx];
+      result.push({ path, item, depth: parentPath.length, hasChildren: item.children.length > 0 });
+      result.push(...flattenTasks(item.children, path));
+    });
+    return result;
   }
 
-  function removeTrack(trackIndex: number) {
-    if (tracks.length <= 1) return;
-    setTracks(tracks.filter((_, i) => i !== trackIndex).map((t, i) => ({ ...t, sortOrder: i })));
+  function getItem(path: number[]): TaskItem {
+    let current: TaskItem[] = tasks;
+    for (let i = 0; i < path.length - 1; i++) {
+      current = current[path[i]].children;
+    }
+    return current[path[path.length - 1]];
   }
 
-  function updateTrackName(trackIndex: number, value: string) {
-    setTracks(tracks.map((t, i) => (i === trackIndex ? { ...t, name: value } : t)));
+  function updateTasks(path: number[], updater: (items: TaskItem[]) => TaskItem[]): void {
+    function recurse(items: TaskItem[], remainingPath: number[]): TaskItem[] {
+      if (remainingPath.length === 0) return updater(items);
+      const [head, ...rest] = remainingPath;
+      return items.map((item, i) =>
+        i === head ? { ...item, children: recurse(item.children, rest) } : item,
+      );
+    }
+    setTasks(recurse(tasks, path));
   }
 
-  function addPhase(trackIndex: number) {
-    setTracks(
-      tracks.map((t, i) =>
-        i === trackIndex
-          ? { ...t, phases: [...t.phases, { name: "", sortOrder: t.phases.length }] }
-          : t,
+  function updateName(path: number[], value: string) {
+    const parentPath = path.slice(0, -1);
+    const idx = path[path.length - 1];
+    updateTasks(parentPath, (items) =>
+      items.map((item, i) => (i === idx ? { ...item, name: value } : item)),
+    );
+  }
+
+  function addSibling(path: number[]) {
+    const parentPath = path.slice(0, -1);
+    const idx = path[path.length - 1];
+    updateTasks(parentPath, (items) => {
+      const copy = [...items];
+      copy.splice(idx + 1, 0, { name: "", children: [] });
+      return copy;
+    });
+  }
+
+  function addChild(path: number[]) {
+    const parentPath = path.slice(0, -1);
+    const idx = path[path.length - 1];
+    updateTasks(parentPath, (items) =>
+      items.map((item, i) =>
+        i === idx ? { ...item, children: [...item.children, { name: "", children: [] }] } : item,
       ),
     );
   }
 
-  function removePhase(trackIndex: number, phaseIndex: number) {
-    setTracks(
-      tracks.map((t, ti) =>
-        ti === trackIndex
-          ? {
-              ...t,
-              phases:
-                t.phases.length <= 1
-                  ? t.phases
-                  : t.phases.filter((_, pi) => pi !== phaseIndex).map((p, i) => ({ ...p, sortOrder: i })),
-            }
-          : t,
-      ),
-    );
+  function removeItem(path: number[]) {
+    const parentPath = path.slice(0, -1);
+    const idx = path[path.length - 1];
+    updateTasks(parentPath, (items) => {
+      if (items.length <= 1 && parentPath.length === 0) return items; // 최소 1개 유지
+      return items.filter((_, i) => i !== idx);
+    });
   }
 
-  function updatePhaseName(trackIndex: number, phaseIndex: number, value: string) {
-    setTracks(
-      tracks.map((t, ti) =>
-        ti === trackIndex
-          ? {
-              ...t,
-              phases: t.phases.map((p, pi) => (pi === phaseIndex ? { ...p, name: value } : p)),
-            }
-          : t,
-      ),
-    );
+  function addRootTask() {
+    setTasks([...tasks, { name: "", children: [] }]);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -110,7 +111,7 @@ export function WorkflowEditor({ templateId, initialData }: WorkflowEditorProps)
     setError(null);
     setSaving(true);
 
-    const payload = { name, description: description || undefined, tracks };
+    const payload = { name, description: description || undefined, tasks };
 
     const result = templateId
       ? await updateTemplate(templateId, payload)
@@ -125,6 +126,8 @@ export function WorkflowEditor({ templateId, initialData }: WorkflowEditorProps)
     router.push("/templates");
     router.refresh();
   }
+
+  const flatList = flattenTasks(tasks);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -152,83 +155,76 @@ export function WorkflowEditor({ templateId, initialData }: WorkflowEditorProps)
         </div>
       </div>
 
-      {/* 트랙 목록 */}
-      <div className="space-y-4">
+      {/* 업무 구조 */}
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label>트랙 & 단계</Label>
-          <Button type="button" variant="outline" size="sm" onClick={addTrack}>
+          <Label>업무 구조</Label>
+          <Button type="button" variant="outline" size="sm" onClick={addRootTask}>
             <Plus className="size-4" />
-            트랙 추가
+            업무 추가
           </Button>
         </div>
 
-        {tracks.map((track, ti) => (
-          <Card key={ti}>
-            <CardHeader className="py-3">
-              <div className="flex items-center gap-2">
-                <GripVertical className="size-4 text-muted-foreground" />
-                <CardTitle className="text-sm">트랙 {ti + 1}</CardTitle>
-                <div className="flex-1">
-                  <Input
-                    value={track.name}
-                    onChange={(e) => updateTrackName(ti, e.target.value)}
-                    placeholder="트랙 이름 (예: PT, 영상)"
-                    className="h-8"
-                    required
-                  />
-                </div>
-                {tracks.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="size-8"
-                    onClick={() => removeTrack(ti)}
-                  >
-                    <X className="size-4" />
-                  </Button>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent className="pb-3">
-              <div className="space-y-2">
-                {track.phases.map((phase, pi) => (
-                  <div key={pi} className="flex items-center gap-2 pl-6">
-                    <span className="text-xs text-muted-foreground w-4">{pi + 1}.</span>
+        <div className="rounded-lg border">
+          <div className="border-b bg-muted/50 px-3 py-2 text-xs font-medium text-muted-foreground">
+            업무명
+          </div>
+          <div className="divide-y">
+            {flatList.map(({ path, item, depth, hasChildren }) => {
+              const key = path.join("-");
+              return (
+                <div
+                  key={key}
+                  className="flex items-center gap-1 px-2 py-1.5 hover:bg-muted/30 group"
+                >
+                  <div className="flex items-center gap-1 flex-1 min-w-0" style={{ paddingLeft: depth * 24 }}>
+                    {hasChildren ? (
+                      <ChevronDown className="size-4 text-muted-foreground flex-shrink-0" />
+                    ) : depth > 0 ? (
+                      <span className="w-4 flex-shrink-0" />
+                    ) : (
+                      <ChevronRight className="size-4 text-muted-foreground flex-shrink-0 opacity-30" />
+                    )}
                     <Input
-                      value={phase.name}
-                      onChange={(e) => updatePhaseName(ti, pi, e.target.value)}
-                      placeholder="단계 이름 (예: 초안 작성)"
-                      className="h-8"
+                      value={item.name}
+                      onChange={(e) => updateName(path, e.target.value)}
+                      placeholder={depth === 0 ? "업무 이름" : "하위 업무 이름"}
+                      className="h-7 text-sm"
                       required
                     />
-                    {track.phases.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="size-7"
-                        onClick={() => removePhase(ti, pi)}
-                      >
-                        <X className="size-3" />
-                      </Button>
-                    )}
                   </div>
-                ))}
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="ml-6 text-xs"
-                  onClick={() => addPhase(ti)}
-                >
-                  <Plus className="size-3" />
-                  단계 추가
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+
+                  <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                    <button
+                      type="button"
+                      title="하위 업무 추가"
+                      onClick={() => addChild(path)}
+                      className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
+                    >
+                      <CornerDownRight className="size-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      title="같은 레벨 추가"
+                      onClick={() => addSibling(path)}
+                      className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
+                    >
+                      <Plus className="size-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      title="삭제"
+                      onClick={() => removeItem(path)}
+                      className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
+                    >
+                      <X className="size-3.5" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {error && <p className="text-sm text-destructive">{error}</p>}

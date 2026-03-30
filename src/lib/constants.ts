@@ -52,3 +52,28 @@ export const GANTT_BAR_COLORS = {
   COMPLETED: "bg-green-400 dark:bg-green-500",
   BLOCKED: "bg-red-400 dark:bg-red-500",
 } as const;
+
+// ─── Task (Flow 스타일) ─────────────────────────────────
+
+export const TASK_STATUS_LABELS = {
+  WAITING: "대기",
+  IN_PROGRESS: "진행",
+  FEEDBACK: "피드백",
+  COMPLETE: "완료",
+} as const;
+
+export const TASK_STATUS_COLORS = {
+  WAITING: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+  IN_PROGRESS: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
+  FEEDBACK: "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300",
+  COMPLETE: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300",
+} as const;
+
+export const TASK_GANTT_BAR_COLORS = {
+  WAITING: "bg-gray-300 dark:bg-gray-600",
+  IN_PROGRESS: "bg-blue-400 dark:bg-blue-500",
+  FEEDBACK: "bg-purple-400 dark:bg-purple-500",
+  COMPLETE: "bg-green-400 dark:bg-green-500",
+} as const;
+
+export type TaskStatusKey = "WAITING" | "IN_PROGRESS" | "FEEDBACK" | "COMPLETE";

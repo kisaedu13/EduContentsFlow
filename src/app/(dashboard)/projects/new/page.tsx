@@ -10,10 +10,7 @@ export default async function NewProjectPage() {
 
   const templates = await prisma.workflowTemplate.findMany({
     include: {
-      tracks: {
-        include: { phases: { orderBy: { sortOrder: "asc" } } },
-        orderBy: { sortOrder: "asc" },
-      },
+      _count: { select: { templateTasks: true } },
     },
     orderBy: { name: "asc" },
   });
@@ -23,7 +20,13 @@ export default async function NewProjectPage() {
       <Header title="새 프로젝트 만들기" />
       <main className="flex-1 p-6">
         <div className="mx-auto max-w-2xl">
-          <ProjectForm templates={templates} />
+          <ProjectForm
+            templates={templates.map((t) => ({
+              id: t.id,
+              name: t.name,
+              taskCount: t._count.templateTasks,
+            }))}
+          />
         </div>
       </main>
     </>

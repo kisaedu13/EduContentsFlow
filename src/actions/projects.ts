@@ -12,7 +12,7 @@ type ActionResult<T = unknown> =
 const CreateProjectSchema = z.object({
   name: z.string().min(1, "프로젝트 이름을 입력하세요"),
   description: z.string().optional(),
-  templateId: z.string().min(1, "템플릿을 선택하세요"),
+  templateId: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
 });
@@ -25,16 +25,7 @@ const UpdateProjectSchema = z.object({
   endDate: z.string().optional(),
 });
 
-const PartSchema = z.object({
-  name: z.string().min(1, "파트 이름을 입력하세요"),
-  sortOrder: z.number(),
-  designDuration: z.number().nullable().optional(),
-  finalDuration: z.number().nullable().optional(),
-  hasPt: z.boolean().default(true),
-  hasVideo: z.boolean().default(true),
-});
-
-// 프로젝트 생성: 템플릿 → 스냅샷 복사
+// 프로젝트 생성 (템플릿 선택 시 업무 구조 복사)
 export async function createProject(
   input: z.input<typeof CreateProjectSchema>,
 ): Promise<ActionResult<{ id: string }>> {
@@ -47,46 +38,41 @@ export async function createProject(
 
     const { name, description, templateId, startDate, endDate } = parsed.data;
 
-    // 템플릿 + 트랙 + 단계 조회
-    const template = await prisma.workflowTemplate.findUnique({
-      where: { id: templateId },
-      include: {
-        tracks: {
-          include: { phases: { orderBy: { sortOrder: "asc" } } },
-          orderBy: { sortOrder: "asc" },
-        },
-      },
-    });
-
-    if (!template) return { error: "템플릿을 찾을 수 없습니다" };
-
-    // 트랜잭션: 프로젝트 + 트랙 스냅샷 + 단계 스냅샷
     const project = await prisma.$transaction(async (tx) => {
       const proj = await tx.project.create({
         data: {
           name,
           description: description || null,
-          templateId,
+          templateId: templateId || null,
           startDate: startDate ? new Date(startDate) : null,
           endDate: endDate ? new Date(endDate) : null,
         },
       });
 
-      // 트랙/단계 스냅샷 복사
-      for (const track of template.tracks) {
-        await tx.projectTrack.create({
-          data: {
-            projectId: proj.id,
-            name: track.name,
-            sortOrder: track.sortOrder,
-            phases: {
-              create: track.phases.map((phase) => ({
-                name: phase.name,
-                sortOrder: phase.sortOrder,
-              })),
-            },
-          },
+      // 템플릿 선택 시 업무 구조 복사
+      if (templateId) {
+        const templateTasks = await tx.templateTask.findMany({
+          where: { templateId },
+          orderBy: [{ depth: "asc" }, { sortOrder: "asc" }],
         });
+
+        if (templateTasks.length > 0) {
+          // 템플릿 업무 ID → 프로젝트 업무 ID 매핑
+          const idMap = new Map<string, string>();
+
+          for (const tt of templateTasks) {
+            const task = await tx.task.create({
+              data: {
+                projectId: proj.id,
+                parentId: tt.parentId ? idMap.get(tt.parentId) ?? null : null,
+                name: tt.name,
+                sortOrder: tt.sortOrder,
+                depth: tt.depth,
+              },
+            });
+            idMap.set(tt.id, task.id);
+          }
+        }
       }
 
       return proj;
@@ -142,81 +128,5 @@ export async function deleteProject(id: string): Promise<ActionResult> {
     return { success: true, data: null };
   } catch {
     return { error: "프로젝트 삭제에 실패했습니다" };
-  }
-}
-
-// 파트 추가 + PartProgress 자동 초기화
-export async function addPart(
-  projectId: string,
-  input: z.input<typeof PartSchema>,
-): Promise<ActionResult<{ id: string }>> {
-  try {
-    const profile = await getCurrentProfile();
-    if (profile.role !== "ADMIN") return { error: "권한이 없습니다" };
-
-    const parsed = PartSchema.safeParse(input);
-    if (!parsed.success) return { error: parsed.error.issues[0].message };
-
-    const { name, sortOrder, designDuration, finalDuration, hasPt, hasVideo } = parsed.data;
-
-    // 프로젝트의 트랙 조회
-    const tracks = await prisma.projectTrack.findMany({
-      where: { projectId },
-      orderBy: { sortOrder: "asc" },
-    });
-
-    const part = await prisma.$transaction(async (tx) => {
-      const newPart = await tx.projectPart.create({
-        data: {
-          projectId,
-          name,
-          sortOrder,
-          designDuration: designDuration ?? null,
-          finalDuration: finalDuration ?? null,
-          hasPt,
-          hasVideo,
-        },
-      });
-
-      // 각 트랙에 대해 PartProgress 초기화
-      const progressData = tracks
-        .filter((track) => {
-          if (track.name === "PT" && !hasPt) return false;
-          if (track.name === "영상" && !hasVideo) return false;
-          return true;
-        })
-        .map((track) => ({
-          partId: newPart.id,
-          trackId: track.id,
-        }));
-
-      if (progressData.length > 0) {
-        await tx.partProgress.createMany({ data: progressData });
-      }
-
-      return newPart;
-    });
-
-    revalidatePath(`/projects/${projectId}`);
-    return { success: true, data: { id: part.id } };
-  } catch {
-    return { error: "파트 추가에 실패했습니다" };
-  }
-}
-
-export async function removePart(
-  projectId: string,
-  partId: string,
-): Promise<ActionResult> {
-  try {
-    const profile = await getCurrentProfile();
-    if (profile.role !== "ADMIN") return { error: "권한이 없습니다" };
-
-    await prisma.projectPart.delete({ where: { id: partId } });
-
-    revalidatePath(`/projects/${projectId}`);
-    return { success: true, data: null };
-  } catch {
-    return { error: "파트 삭제에 실패했습니다" };
   }
 }
