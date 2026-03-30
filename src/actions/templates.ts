@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { getCurrentProfile } from "@/lib/auth";
+import { getVerifiedProfile } from "@/lib/auth";
 
 type ActionResult<T = unknown> =
   | { success: true; data: T }
@@ -32,7 +32,7 @@ export async function createTemplate(
   input: z.input<typeof TemplateSchema>,
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const profile = await getCurrentProfile();
+    const profile = await getVerifiedProfile();
     if (profile.role !== "ADMIN") return { error: "권한이 없습니다" };
 
     const parsed = TemplateSchema.safeParse(input);
@@ -79,7 +79,7 @@ export async function updateTemplate(
   input: z.input<typeof TemplateSchema>,
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const profile = await getCurrentProfile();
+    const profile = await getVerifiedProfile();
     if (profile.role !== "ADMIN") return { error: "권한이 없습니다" };
 
     const parsed = TemplateSchema.safeParse(input);
@@ -128,7 +128,7 @@ export async function deleteTemplate(
   id: string,
 ): Promise<ActionResult> {
   try {
-    const profile = await getCurrentProfile();
+    const profile = await getVerifiedProfile();
     if (profile.role !== "ADMIN") return { error: "권한이 없습니다" };
 
     const projectCount = await prisma.project.count({

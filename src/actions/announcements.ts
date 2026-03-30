@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { getCurrentProfile } from "@/lib/auth";
+import { getVerifiedProfile } from "@/lib/auth";
 
 type ActionResult<T = unknown> =
   | { success: true; data: T }
@@ -19,7 +19,7 @@ export async function createAnnouncement(
   input: z.input<typeof CreateAnnouncementSchema>,
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const profile = await getCurrentProfile();
+    const profile = await getVerifiedProfile();
 
     const parsed = CreateAnnouncementSchema.safeParse(input);
     if (!parsed.success) return { error: parsed.error.issues[0].message };
@@ -44,7 +44,7 @@ export async function createAnnouncement(
 
 export async function deleteAnnouncement(id: string): Promise<ActionResult> {
   try {
-    const profile = await getCurrentProfile();
+    const profile = await getVerifiedProfile();
 
     const announcement = await prisma.announcement.findUnique({
       where: { id },

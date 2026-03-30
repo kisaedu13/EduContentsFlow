@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import { prisma } from "@/lib/prisma";
-import { getCurrentProfile } from "@/lib/auth";
+import { getVerifiedProfile } from "@/lib/auth";
 
 type ActionResult<T = unknown> =
   | { success: true; data: T }
@@ -30,7 +30,7 @@ export async function createUser(
   input: z.input<typeof CreateUserSchema>,
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const profile = await getCurrentProfile();
+    const profile = await getVerifiedProfile();
     if (profile.role !== "ADMIN") return { error: "권한이 없습니다" };
 
     const parsed = CreateUserSchema.safeParse(input);
@@ -73,7 +73,7 @@ export async function updateUserRole(
   role: "ADMIN" | "MEMBER",
 ): Promise<ActionResult> {
   try {
-    const profile = await getCurrentProfile();
+    const profile = await getVerifiedProfile();
     if (profile.role !== "ADMIN") return { error: "권한이 없습니다" };
     if (profile.id === userId) return { error: "자신의 역할은 변경할 수 없습니다" };
 

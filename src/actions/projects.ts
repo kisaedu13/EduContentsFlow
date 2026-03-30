@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { getCurrentProfile } from "@/lib/auth";
+import { getVerifiedProfile } from "@/lib/auth";
 
 type ActionResult<T = unknown> =
   | { success: true; data: T }
@@ -30,7 +30,7 @@ export async function createProject(
   input: z.input<typeof CreateProjectSchema>,
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const profile = await getCurrentProfile();
+    const profile = await getVerifiedProfile();
     if (profile.role !== "ADMIN") return { error: "권한이 없습니다" };
 
     const parsed = CreateProjectSchema.safeParse(input);
@@ -90,7 +90,7 @@ export async function updateProject(
   input: z.input<typeof UpdateProjectSchema>,
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const profile = await getCurrentProfile();
+    const profile = await getVerifiedProfile();
     if (profile.role !== "ADMIN") return { error: "권한이 없습니다" };
 
     const parsed = UpdateProjectSchema.safeParse(input);
@@ -118,7 +118,7 @@ export async function updateProject(
 
 export async function deleteProject(id: string): Promise<ActionResult> {
   try {
-    const profile = await getCurrentProfile();
+    const profile = await getVerifiedProfile();
     if (profile.role !== "ADMIN") return { error: "권한이 없습니다" };
 
     await prisma.project.delete({ where: { id } });

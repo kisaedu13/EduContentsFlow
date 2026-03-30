@@ -27,7 +27,7 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project }: ProjectCardProps) {
   return (
-    <Link href={`/projects/${project.id}`}>
+    <Link href={`/projects/${project.id}`} prefetch={false}>
       <Card className="transition-colors hover:bg-muted/50">
         <CardHeader className="pb-2">
           <div className="flex items-start justify-between">

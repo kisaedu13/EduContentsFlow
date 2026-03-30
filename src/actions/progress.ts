@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { getCurrentProfile } from "@/lib/auth";
+import { getVerifiedProfile } from "@/lib/auth";
 
 type ActionResult<T = unknown> =
   | { success: true; data: T }
@@ -21,7 +21,7 @@ export async function updateProgress(
   input: z.input<typeof UpdateProgressSchema>,
 ): Promise<ActionResult> {
   try {
-    await getCurrentProfile();
+    await getVerifiedProfile();
 
     const parsed = UpdateProgressSchema.safeParse(input);
     if (!parsed.success) return { error: parsed.error.issues[0].message };
@@ -51,7 +51,7 @@ export async function advancePhase(
   progressId: string,
 ): Promise<ActionResult> {
   try {
-    await getCurrentProfile();
+    await getVerifiedProfile();
 
     const progress = await prisma.partProgress.findUnique({
       where: { id: progressId },

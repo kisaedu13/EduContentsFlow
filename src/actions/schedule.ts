@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { getCurrentProfile } from "@/lib/auth";
+import { getVerifiedProfile } from "@/lib/auth";
 
 type ActionResult<T = unknown> =
   | { success: true; data: T }
@@ -20,7 +20,7 @@ export async function updatePartDates(
   input: z.input<typeof UpdateDatesSchema>,
 ): Promise<ActionResult> {
   try {
-    await getCurrentProfile();
+    await getVerifiedProfile();
 
     const parsed = UpdateDatesSchema.safeParse(input);
     if (!parsed.success) return { error: parsed.error.issues[0].message };

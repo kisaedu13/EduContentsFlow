@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { getCurrentProfile } from "@/lib/auth";
+import { getVerifiedProfile } from "@/lib/auth";
 
 type ActionResult<T = unknown> =
   | { success: true; data: T }
@@ -28,7 +28,7 @@ export async function createTask(
   input: z.input<typeof CreateTaskSchema>,
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    await getCurrentProfile();
+    await getVerifiedProfile();
 
     const parsed = CreateTaskSchema.safeParse(input);
     if (!parsed.success) return { error: parsed.error.issues[0].message };
@@ -75,7 +75,7 @@ export async function updateTask(
   input: z.input<typeof UpdateTaskSchema>,
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    await getCurrentProfile();
+    await getVerifiedProfile();
 
     const parsed = UpdateTaskSchema.safeParse(input);
     if (!parsed.success) return { error: parsed.error.issues[0].message };
@@ -126,7 +126,7 @@ export async function replaceProjectTasks(
   tasks: unknown[],
 ): Promise<ActionResult> {
   try {
-    const profile = await getCurrentProfile();
+    const profile = await getVerifiedProfile();
     if (profile.role !== "ADMIN") return { error: "권한이 없습니다" };
 
     const parsed = z.array(TaskItemSchema).safeParse(tasks);
@@ -168,7 +168,7 @@ export async function replaceProjectTasks(
 
 export async function deleteTask(taskId: string): Promise<ActionResult> {
   try {
-    await getCurrentProfile();
+    await getVerifiedProfile();
 
     const task = await prisma.task.findUnique({
       where: { id: taskId },
