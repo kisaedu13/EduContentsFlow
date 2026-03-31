@@ -81,7 +81,7 @@ export async function createUser(
     });
 
     revalidatePath("/team");
-    return { success: true, data: { id: data.user.id } };
+    return { success: true, data: { id: userId } };
   } catch (e) {
     console.error("createUser error:", e);
     return { error: `사용자 생성에 실패했습니다: ${e instanceof Error ? e.message : String(e)}` };
