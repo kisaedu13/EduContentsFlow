@@ -78,9 +78,9 @@ export function UserNav({ user }: UserNavProps) {
       <DropdownMenu>
         <DropdownMenuTrigger render={<SidebarMenuButton className="h-auto py-2" />}>
           <Avatar className="size-6">
-            <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">{initials}</AvatarFallback>
+            <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">{initials}</AvatarFallback>
           </Avatar>
-          <div className="flex flex-col items-start text-xs leading-tight">
+          <div className="flex flex-col items-start text-sm leading-tight">
             <span className="font-medium">{user.name}</span>
             <span className="text-muted-foreground">{user.email.split("@")[0]}</span>
           </div>
@@ -137,9 +137,8 @@ export function UserNav({ user }: UserNavProps) {
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="6자 이상"
+                  placeholder="새 비밀번호"
                   required
-                  minLength={6}
                 />
               </div>
               <div className="space-y-2">
@@ -151,7 +150,6 @@ export function UserNav({ user }: UserNavProps) {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="비밀번호를 다시 입력하세요"
                   required
-                  minLength={6}
                 />
               </div>
               {error && (

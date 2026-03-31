@@ -78,7 +78,7 @@ export default async function ProjectDetailPage({
 
   return (
     <>
-      <Header title={project.name} />
+      <Header breadcrumb={[{ label: "프로젝트" }, { label: project.name }]} />
       <main className="flex-1 p-6 space-y-6">
         {/* 프로젝트 정보 */}
         <div className="flex items-start justify-between">
@@ -94,7 +94,7 @@ export default async function ProjectDetailPage({
             {project.description && (
               <p className="text-sm text-muted-foreground">{project.description}</p>
             )}
-            <div className="flex gap-4 text-xs text-muted-foreground">
+            <div className="flex gap-4 text-sm text-muted-foreground">
               {project.startDate && (
                 <span>
                   {format(project.startDate, "yyyy.MM.dd")}
@@ -110,7 +110,7 @@ export default async function ProjectDetailPage({
           </div>
           {isAdmin && (
             <Button variant="outline" size="sm" render={<Link href={`/projects/${project.id}/edit`} />}>
-              <Pencil className="size-4" />
+              <Pencil className="size-5" />
               편집
             </Button>
           )}

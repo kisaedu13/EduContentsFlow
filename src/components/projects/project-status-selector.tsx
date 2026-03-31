@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { PROJECT_STATUS_LABELS, PROJECT_STATUS_COLORS } from "@/lib/constants";
 import { updateProject } from "@/actions/projects";
@@ -16,6 +17,7 @@ interface ProjectStatusSelectorProps {
 
 export function ProjectStatusSelector({ projectId, status, name }: ProjectStatusSelectorProps) {
   const [, startTransition] = useTransition();
+  const router = useRouter();
   const [current, setCurrent] = useState(status);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -33,6 +35,7 @@ export function ProjectStatusSelector({ projectId, status, name }: ProjectStatus
     setOpen(false);
     startTransition(async () => {
       await updateProject(projectId, { name, status: s });
+      router.refresh();
     });
   }
 

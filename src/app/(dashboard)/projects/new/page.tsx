@@ -17,7 +17,7 @@ export default async function NewProjectPage() {
 
   return (
     <>
-      <Header title="새 프로젝트 만들기" />
+      <Header breadcrumb={[{ label: "프로젝트" }, { label: "새 프로젝트" }]} />
       <main className="flex-1 p-6">
         <div className="mx-auto max-w-2xl">
           <ProjectForm

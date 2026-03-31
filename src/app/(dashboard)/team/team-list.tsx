@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Shield, User } from "lucide-react";
+import { Plus, Shield, User, Trash2 } from "lucide-react";
 import { format } from "date-fns";
-import { createUser, updateUserRole } from "@/actions/team";
+import { createUser, updateUserRole, deleteUser } from "@/actions/team";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +16,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 
 interface Member {
@@ -42,6 +53,7 @@ export function TeamList({ members, currentUserId }: TeamListProps) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [toggling, setToggling] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -65,6 +77,17 @@ export function TeamList({ members, currentUserId }: TeamListProps) {
     router.refresh();
   }
 
+  async function handleDelete(userId: string) {
+    setDeleting(userId);
+    const result = await deleteUser(userId);
+    if ("error" in result) {
+      setError(result.error);
+    } else {
+      router.refresh();
+    }
+    setDeleting(null);
+  }
+
   async function handleToggleRole(userId: string, currentRole: string) {
     setToggling(userId);
     const newRole = currentRole === "ADMIN" ? "MEMBER" : "ADMIN";
@@ -80,7 +103,7 @@ export function TeamList({ members, currentUserId }: TeamListProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium">팀원 ({members.length}명)</h3>
+        <h3 className="font-medium">팀원 ({members.length}명)</h3>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger render={<Button size="sm" />}>
             <Plus className="size-4" />
@@ -119,9 +142,8 @@ export function TeamList({ members, currentUserId }: TeamListProps) {
                   type="text"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="6자 이상"
+                  placeholder="비밀번호"
                   required
-                  minLength={6}
                 />
               </div>
               <div className="space-y-2">
@@ -175,15 +197,15 @@ export function TeamList({ members, currentUserId }: TeamListProps) {
                 <tr key={member.id} className="border-b last:border-0">
                   <td className="px-4 py-2.5">
                     <div className="flex items-center gap-2.5">
-                      <Avatar className="size-7">
-                        <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
+                      <Avatar className="size-8">
+                        <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
                           {member.name.slice(0, 1)}
                         </AvatarFallback>
                       </Avatar>
                       <span className="font-medium">
                         {member.name}
                         {isMe && (
-                          <span className="ml-1.5 text-xs font-normal text-muted-foreground">(나)</span>
+                          <span className="ml-1.5 text-sm font-normal text-muted-foreground">(나)</span>
                         )}
                       </span>
                     </div>
@@ -194,16 +216,16 @@ export function TeamList({ members, currentUserId }: TeamListProps) {
                   <td className="px-4 py-2.5">
                     <span
                       className={cn(
-                        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
+                        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-sm font-medium",
                         member.role === "ADMIN"
                           ? "bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-300"
                           : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
                       )}
                     >
                       {member.role === "ADMIN" ? (
-                        <><Shield className="size-3" /> 관리자</>
+                        <><Shield className="size-4" /> 관리자</>
                       ) : (
-                        <><User className="size-3" /> 팀원</>
+                        <><User className="size-4" /> 팀원</>
                       )}
                     </span>
                   </td>
@@ -215,15 +237,43 @@ export function TeamList({ members, currentUserId }: TeamListProps) {
                   </td>
                   <td className="px-4 py-2.5">
                     {!isMe && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-xs"
-                        disabled={toggling === member.id}
-                        onClick={() => handleToggleRole(member.id, member.role)}
-                      >
-                        {member.role === "ADMIN" ? "팀원으로" : "관리자로"}
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-sm"
+                          disabled={toggling === member.id}
+                          onClick={() => handleToggleRole(member.id, member.role)}
+                        >
+                          {member.role === "ADMIN" ? "팀원으로" : "관리자로"}
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger render={
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              className="text-muted-foreground hover:text-destructive"
+                              disabled={deleting === member.id}
+                            />
+                          }>
+                            <Trash2 className="size-4.5" />
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>팀원 삭제</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                &quot;{member.name}&quot;을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>취소</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDelete(member.id)}>
+                                삭제
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     )}
                   </td>
                 </tr>

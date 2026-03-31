@@ -45,7 +45,7 @@ export default async function EditTemplatePage({
 
   return (
     <>
-      <Header title={`${template.name} 편집`} />
+      <Header breadcrumb={[{ label: "템플릿" }, { label: template.name }]} />
       <main className="flex-1 p-6">
         <div className="mx-auto max-w-2xl">
           <WorkflowEditor

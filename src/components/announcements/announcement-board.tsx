@@ -110,7 +110,7 @@ export function AnnouncementBoard({
 
       {/* 공지 목록 */}
       {optimisticAnnouncements.length === 0 ? (
-        <div className="py-12 text-center text-muted-foreground text-sm">
+        <div className="py-12 text-center text-muted-foreground text-base">
           <Megaphone className="size-8 mx-auto mb-2 opacity-40" />
           아직 공지사항이 없습니다.
         </div>
@@ -119,15 +119,15 @@ export function AnnouncementBoard({
           {optimisticAnnouncements.map((a) => (
             <div key={a.id} className={`flex gap-3 ${a.id.startsWith("temp-") ? "opacity-70" : ""}`}>
               <Avatar className="size-8 shrink-0 mt-0.5">
-                <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
+                <AvatarFallback className="bg-primary/10 text-primary text-base font-medium">
                   {a.authorName.slice(0, 1)}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 rounded-lg border p-3 space-y-1.5">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h4 className="font-medium text-sm">{a.title}</h4>
-                    <p className="text-xs text-muted-foreground">
+                    <h4 className="font-medium text-base">{a.title}</h4>
+                    <p className="text-base text-muted-foreground">
                       {a.authorName} &middot; {format(new Date(a.createdAt), "yyyy.MM.dd HH:mm")}
                     </p>
                   </div>
@@ -141,7 +141,7 @@ export function AnnouncementBoard({
                     </button>
                   )}
                 </div>
-                <p className="text-sm whitespace-pre-wrap">{a.content}</p>
+                <p className="text-base whitespace-pre-wrap">{a.content}</p>
               </div>
             </div>
           ))}

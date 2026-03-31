@@ -47,7 +47,7 @@ export default async function SchedulePage() {
 
   return (
     <>
-      <Header title="일정" />
+      <Header breadcrumb={[{ label: "일정" }]} />
       <main className="flex-1 p-6 space-y-4">
         <p className="text-sm text-muted-foreground">
           진행 중인 프로젝트의 파트별 일정을 확인합니다.

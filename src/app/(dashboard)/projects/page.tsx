@@ -30,7 +30,7 @@ export default async function ProjectsPage() {
 
   return (
     <>
-      <Header title="프로젝트" />
+      <Header breadcrumb={[{ label: "프로젝트" }]} />
       <main className="flex-1 p-6">
         <div className="mb-6 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">

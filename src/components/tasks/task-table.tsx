@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useCallback, useTransition } from "react";
+import { Plus } from "lucide-react";
 import { TaskRow, type TaskData } from "./task-row";
 import { AddTaskRow } from "./add-task-row";
 import { createTask, updateTask, deleteTask } from "@/actions/tasks";
+import { Button } from "@/components/ui/button";
 import type { TaskStatusKey } from "@/lib/constants";
 
 interface RawTask {
@@ -206,44 +208,79 @@ export function TaskTable({ projectId, tasks: serverTasks, profiles }: TaskTable
     hasChildren: hasChildTasks(t.id, tasks),
   }));
 
-  return (
-    <div className="rounded-lg border overflow-x-auto">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b bg-muted/50 text-muted-foreground sticky top-0 z-10">
-            <th className="text-left py-2.5 px-2 text-xs font-semibold uppercase tracking-wider">업무명</th>
-            <th className="text-left py-2.5 px-2 text-xs font-semibold uppercase tracking-wider w-[80px]">상태</th>
-            <th className="text-left py-2.5 px-2 text-xs font-semibold uppercase tracking-wider w-[100px]">담당자</th>
-            <th className="text-left py-2.5 px-2 text-xs font-semibold uppercase tracking-wider w-[120px]">시작일</th>
-            <th className="text-left py-2.5 px-2 text-xs font-semibold uppercase tracking-wider w-[120px]">마감일</th>
-            <th className="text-left py-2.5 px-2 text-xs font-semibold uppercase tracking-wider w-[100px]">진척도</th>
-          </tr>
-        </thead>
-        <tbody>
-          {taskDataList.map((task) => (
-            <TaskRowWithChild
-              key={task.id}
-              task={task}
-              profiles={profiles}
-              isExpanded={expandedIds.has(task.id)}
-              onToggleExpand={() => toggleExpand(task.id)}
-              onUpdate={handleUpdate}
-              onDelete={handleDelete}
-              onAddChild={handleAddChild}
-              onAddSibling={handleAddSibling}
-              addingChildFor={addingChildFor}
-              onAddChildSubmit={handleAddChildSubmit}
-            />
-          ))}
-          <AddTaskRow onAdd={handleAddRoot} placeholder="업무 추가..." />
-        </tbody>
-      </table>
+  const [addingRoot, setAddingRoot] = useState(false);
 
-      {tasks.length === 0 && (
-        <div className="py-12 text-center text-muted-foreground text-sm">
-          아직 업무가 없습니다. 위의 &quot;업무 추가&quot;를 눌러 시작하세요.
-        </div>
-      )}
+  return (
+    <div className="space-y-2">
+      {/* 상단 업무 추가 */}
+      <div className="flex justify-end">
+        {addingRoot ? (
+          <div className="flex items-center gap-2">
+            <input
+              autoFocus
+              type="text"
+              placeholder="업무 이름 입력..."
+              className="h-8 rounded-md border border-input bg-transparent px-2.5 text-sm outline-none focus:border-ring"
+              onBlur={(e) => {
+                const v = e.target.value.trim();
+                if (v) handleAddRoot(v);
+                setAddingRoot(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  const v = (e.target as HTMLInputElement).value.trim();
+                  if (v) handleAddRoot(v);
+                  setAddingRoot(false);
+                }
+                if (e.key === "Escape") setAddingRoot(false);
+              }}
+            />
+          </div>
+        ) : (
+          <Button variant="outline" size="sm" onClick={() => setAddingRoot(true)}>
+            <Plus className="size-4" />
+            업무 추가
+          </Button>
+        )}
+      </div>
+
+      <div className="rounded-lg border overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b bg-muted/50 text-muted-foreground sticky top-0 z-10">
+              <th className="text-left py-2.5 px-2 text-sm font-semibold uppercase tracking-wider">업무명</th>
+              <th className="text-left py-2.5 px-2 text-sm font-semibold uppercase tracking-wider w-[100px]">상태</th>
+              <th className="text-left py-2.5 px-2 text-sm font-semibold uppercase tracking-wider w-[100px]">담당자</th>
+              <th className="text-left py-2.5 px-2 text-sm font-semibold uppercase tracking-wider w-[120px]">시작일</th>
+              <th className="text-left py-2.5 px-2 text-sm font-semibold uppercase tracking-wider w-[120px]">마감일</th>
+              <th className="text-left py-2.5 px-2 text-sm font-semibold uppercase tracking-wider w-[100px]">진척도</th>
+            </tr>
+          </thead>
+          <tbody>
+            {taskDataList.map((task) => (
+              <TaskRowWithChild
+                key={task.id}
+                task={task}
+                profiles={profiles}
+                isExpanded={expandedIds.has(task.id)}
+                onToggleExpand={() => toggleExpand(task.id)}
+                onUpdate={handleUpdate}
+                onDelete={handleDelete}
+                onAddChild={handleAddChild}
+                onAddSibling={handleAddSibling}
+                addingChildFor={addingChildFor}
+                onAddChildSubmit={handleAddChildSubmit}
+              />
+            ))}
+          </tbody>
+        </table>
+
+        {tasks.length === 0 && (
+          <div className="py-12 text-center text-muted-foreground text-sm">
+            업무가 없습니다. 오른쪽 위 &quot;업무 추가&quot; 버튼으로 시작하세요.
+          </div>
+        )}
+      </div>
     </div>
   );
 }

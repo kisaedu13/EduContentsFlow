@@ -15,45 +15,52 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
-  TASK_STATUS_LABELS,
-  TASK_STATUS_COLORS,
+  PROJECT_STATUS_LABELS,
+  PROJECT_STATUS_COLORS,
 } from "@/lib/constants";
-import type { TaskStatus } from "@/generated/prisma/client";
+import type { ProjectStatus } from "@/generated/prisma/client";
 
 const getDashboardData = unstable_cache(
   async () => {
-    const [projectStatusCounts, taskCounts, recentTasks] = await Promise.all([
-      prisma.project.groupBy({
-        by: ["status"],
-        _count: { _all: true },
-      }),
-      prisma.task.groupBy({
-        by: ["status"],
-        _count: { _all: true },
-      }),
-      prisma.task.findMany({
-        where: {
-          project: { status: { in: ["PREPARING", "IN_PROGRESS"] } },
-        },
-        include: {
-          project: { select: { id: true, name: true } },
-          assignee: { select: { name: true } },
-        },
-        orderBy: { updatedAt: "desc" },
-        take: 8,
-      }),
-    ]);
-    return { projectStatusCounts, taskCounts, recentTasks };
+    const projectStatusCounts = await prisma.project.groupBy({
+      by: ["status"],
+      _count: { _all: true },
+    });
+    return { projectStatusCounts };
   },
   ["dashboard-data"],
   { revalidate: 10 },
 );
 
+const STATUS_BORDER_COLORS: Record<string, string> = {
+  PREPARING: "border-l-amber-400",
+  IN_PROGRESS: "border-l-sky-400",
+  COMPLETED: "border-l-emerald-400",
+  ON_HOLD: "border-l-gray-300 dark:border-l-gray-600",
+};
+
 export default async function DashboardPage() {
-  const [profile, { projectStatusCounts, taskCounts, recentTasks }] = await Promise.all([
+  const [profile, { projectStatusCounts }] = await Promise.all([
     getCurrentProfile(),
     getDashboardData(),
   ]);
+
+  // 내가 담당자인 프로젝트 조회 (캐싱 불가 - 사용자별 데이터)
+  const myProjects = await prisma.project.findMany({
+    where: {
+      tasks: {
+        some: { assigneeId: profile.id },
+      },
+    },
+    include: {
+      _count: { select: { tasks: true } },
+      tasks: {
+        where: { assigneeId: profile.id },
+        select: { id: true, status: true },
+      },
+    },
+    orderBy: { updatedAt: "desc" },
+  });
 
   const statusCounts = {
     PREPARING: 0,
@@ -67,16 +74,6 @@ export default async function DashboardPage() {
     totalProjects += row._count._all;
   }
 
-  let totalTasks = 0;
-  let completedTasks = 0;
-  for (const row of taskCounts) {
-    totalTasks += row._count._all;
-    if (row.status === "COMPLETE") completedTasks = row._count._all;
-  }
-  const overallPercent = totalTasks > 0
-    ? Math.round((completedTasks / totalTasks) * 100)
-    : 0;
-
   const statCards = [
     { label: "전체 프로젝트", value: totalProjects, icon: FolderKanban, color: "text-primary", bg: "bg-primary/10" },
     { label: "진행중", value: statusCounts.IN_PROGRESS, icon: PlayCircle, color: "text-sky-600 dark:text-sky-400", bg: "bg-sky-50 dark:bg-sky-950" },
@@ -86,11 +83,11 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <Header title="대시보드" />
+      <Header breadcrumb={[{ label: "대시보드" }]} />
       <main className="flex-1 p-6 space-y-6">
         <div>
           <h2 className="text-2xl font-bold">안녕하세요, {profile.name}님</h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground">
             교육 콘텐츠 제작 현황을 한눈에 확인하세요.
           </p>
         </div>
@@ -98,90 +95,80 @@ export default async function DashboardPage() {
         {/* 통계 카드 */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {statCards.map((card) => (
-            <Card key={card.label}>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {card.label}
-                </CardTitle>
-                <div className={cn("flex size-8 items-center justify-center rounded-lg", card.bg)}>
-                  <card.icon className={cn("size-4", card.color)} />
-                </div>
-              </CardHeader>
-              <CardContent>
+            <Card key={card.label} className="!flex-row items-center gap-4 !p-5">
+              <div className={cn("flex size-12 shrink-0 items-center justify-center rounded-full", card.bg)}>
+                <card.icon className={cn("size-6", card.color)} />
+              </div>
+              <div>
                 <div className="text-2xl font-bold">{card.value}</div>
-              </CardContent>
+                <div className="text-sm text-muted-foreground">{card.label}</div>
+              </div>
             </Card>
           ))}
         </div>
 
-        {/* 전체 진행률 */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">전체 진행률</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-4">
-              <div className="flex-1">
-                <div className="h-3 rounded-full bg-muted overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-primary transition-all"
-                    style={{ width: `${overallPercent}%` }}
-                  />
-                </div>
-              </div>
-              <span className="text-sm font-medium w-16 text-right">
-                {overallPercent}%
-              </span>
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              전체 {totalTasks}개 업무 중 {completedTasks}개 완료
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* 최근 업데이트 업무 */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">최근 업데이트</CardTitle>
+        {/* 내 담당 프로젝트 */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold">내 담당 프로젝트</h3>
             <Button variant="ghost" size="sm" render={<Link href="/projects" />}>
-              전체 보기 <ArrowRight className="size-3.5" />
+              전체 보기 <ArrowRight className="size-4" />
             </Button>
-          </CardHeader>
-          <CardContent>
-            {recentTasks.length === 0 ? (
-              <p className="text-sm text-muted-foreground">아직 업무가 없습니다.</p>
-            ) : (
-              <div className="space-y-2">
-                {recentTasks.map((task) => (
-                  <Link
-                    key={task.id}
-                    href={`/projects/${task.project.id}`}
-                    prefetch={false}
-                    className="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-muted/50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <span
-                        className={cn(
-                          "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium",
-                          TASK_STATUS_COLORS[task.status as TaskStatus],
+          </div>
+
+          {myProjects.length === 0 ? (
+            <Card>
+              <CardContent className="py-8 text-center">
+                <FolderKanban className="mx-auto mb-2 size-8 text-muted-foreground/40" />
+                <p className="text-sm text-muted-foreground">
+                  담당 업무가 배정된 프로젝트가 없습니다.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {myProjects.map((project) => {
+                const myTasks = project.tasks;
+                const myCompleted = myTasks.filter((t) => t.status === "COMPLETE").length;
+
+                return (
+                  <Link key={project.id} href={`/projects/${project.id}`} prefetch={false}>
+                    <Card className={cn(
+                      "border-l-[3px] transition-all hover:shadow-md",
+                      STATUS_BORDER_COLORS[project.status] ?? "",
+                    )}>
+                      <CardHeader className="pb-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <CardTitle className="text-base">{project.name}</CardTitle>
+                          <span className={cn(
+                            "shrink-0 rounded-full px-2 py-0.5 text-xs font-medium",
+                            PROJECT_STATUS_COLORS[project.status as ProjectStatus],
+                          )}>
+                            {PROJECT_STATUS_LABELS[project.status as ProjectStatus]}
+                          </span>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between text-sm text-muted-foreground">
+                          <span>내 업무: {myCompleted}/{myTasks.length}건 완료</span>
+                          <span>전체: {project._count.tasks}건</span>
+                        </div>
+                        {myTasks.length > 0 && (
+                          <div className="mt-2 h-1.5 rounded-full bg-muted overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-primary transition-all"
+                              style={{ width: `${Math.round((myCompleted / myTasks.length) * 100)}%` }}
+                            />
+                          </div>
                         )}
-                      >
-                        {TASK_STATUS_LABELS[task.status as TaskStatus]}
-                      </span>
-                      <span className="truncate font-medium">{task.name}</span>
-                      <span className="shrink-0 text-xs text-muted-foreground">
-                        {task.project.name}
-                      </span>
-                    </div>
-                    <span className="shrink-0 text-xs text-muted-foreground">
-                      {task.assignee?.name ?? "미배정"}
-                    </span>
+                      </CardContent>
+                    </Card>
                   </Link>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </main>
     </>
   );

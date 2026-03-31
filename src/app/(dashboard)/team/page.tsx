@@ -17,7 +17,7 @@ export default async function TeamPage() {
 
   return (
     <>
-      <Header title="팀 관리" />
+      <Header breadcrumb={[{ label: "팀 관리" }]} />
       <main className="flex-1 p-6 space-y-6">
         <p className="text-sm text-muted-foreground">
           팀원을 추가하고 역할을 관리합니다.

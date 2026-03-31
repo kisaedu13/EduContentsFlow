@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { Header } from "@/components/layout/header";
 import { ProjectForm } from "@/components/projects/project-form";
 import { ProjectTaskEditor } from "@/components/projects/project-task-editor";
+import { ProjectDeleteButton } from "@/components/projects/project-delete-button";
 
 interface TaskItem {
   name: string;
@@ -47,7 +48,7 @@ export default async function EditProjectPage({
 
   return (
     <>
-      <Header title={`${project.name} 편집`} />
+      <Header breadcrumb={[{ label: "프로젝트" }, { label: project.name }, { label: "편집" }]} />
       <main className="flex-1 p-6 space-y-8">
         <div className="mx-auto max-w-2xl">
           <h3 className="text-lg font-semibold mb-4">프로젝트 기본 정보</h3>
@@ -73,6 +74,12 @@ export default async function EditProjectPage({
             projectId={project.id}
             initialTasks={taskTree}
           />
+        </div>
+
+        <div className="mx-auto max-w-2xl border-t pt-6">
+          <h3 className="text-lg font-semibold mb-2 text-destructive">위험 영역</h3>
+          <p className="text-sm text-muted-foreground mb-4">프로젝트를 삭제하면 모든 업무와 공지사항이 함께 삭제됩니다.</p>
+          <ProjectDeleteButton projectId={project.id} projectName={project.name} />
         </div>
       </main>
     </>

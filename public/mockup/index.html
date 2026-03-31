@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduContentsFlow — UI Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.min.css">
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+    * { font-family: 'Pretendard Variable', sans-serif; }
+    .icon::before { font-family: 'lucide'; font-size: 18px; }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: { 50: '#eef2f7', 100: '#d4dce8', 600: '#2d4a7a', 700: '#1e3a5f', 800: '#162d4a', 900: '#0f1f35' },
+            brand: { DEFAULT: '#2563eb', light: '#3b82f6', dark: '#1d4ed8' },
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <div class="flex h-screen overflow-hidden">
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="w-[240px] bg-navy-700 flex flex-col shrink-0">
+      <!-- Logo -->
+      <div class="px-5 py-5 flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-brand flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <div>
+          <div class="text-white font-bold text-sm">EduContentsFlow</div>
+          <div class="text-navy-100/50 text-[11px]">안전보건교육본부</div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 px-3 mt-2 space-y-1">
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors text-sm">
+          <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          대시보드
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/15 text-white font-medium text-sm">
+          <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+          프로젝트
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors text-sm">
+          <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+          일정
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors text-sm">
+          <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          팀 관리
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors text-sm">
+          <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+          템플릿
+        </a>
+      </nav>
+
+      <!-- New Project Button -->
+      <div class="px-3 mb-3">
+        <button class="w-full flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white rounded-lg py-2.5 text-sm font-medium transition-colors">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          새 프로젝트
+        </button>
+      </div>
+
+      <!-- User -->
+      <div class="px-4 py-3 border-t border-white/10 flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-brand/30 flex items-center justify-center text-white text-xs font-bold">관</div>
+        <div>
+          <div class="text-white text-sm font-medium">관리자</div>
+          <div class="text-white/40 text-[11px]">admin</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ========== MAIN ========== -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+
+      <!-- Header -->
+      <header class="h-14 border-b bg-white flex items-center px-6 gap-4 shrink-0">
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-1.5 text-sm">
+          <a href="#" class="text-gray-400 hover:text-gray-600">프로젝트</a>
+          <svg class="w-3.5 h-3.5 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+          <span class="text-gray-900 font-medium">2026년 상반기 안전교육</span>
+        </nav>
+
+        <div class="flex-1"></div>
+
+        <!-- Search -->
+        <div class="relative">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" placeholder="업무 검색..." class="pl-9 pr-4 py-1.5 text-sm rounded-lg border border-gray-200 bg-gray-50 w-64 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand">
+        </div>
+
+        <!-- Icons -->
+        <button class="relative p-2 rounded-lg hover:bg-gray-100 text-gray-500">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+        </button>
+        <div class="w-8 h-8 rounded-full bg-brand/10 flex items-center justify-center text-brand text-xs font-bold">관</div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 overflow-y-auto p-6 space-y-6">
+
+        <!-- Project Header -->
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="flex items-center gap-3 mb-1">
+              <h1 class="text-2xl font-bold">2026년 상반기 안전교육</h1>
+              <span class="px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 text-sky-700 border border-sky-200">진행중</span>
+            </div>
+            <p class="text-sm text-gray-500">산업안전보건법 개정에 따른 교육 콘텐츠 제작 프로젝트</p>
+          </div>
+          <button class="flex items-center gap-2 bg-brand hover:bg-brand-dark text-white rounded-lg px-4 py-2.5 text-sm font-medium transition-colors">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            업무 추가
+          </button>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="grid grid-cols-4 gap-4">
+          <!-- Total -->
+          <div class="bg-white rounded-xl border border-gray-100 p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
+              <svg class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
+            </div>
+            <div>
+              <div class="text-2xl font-bold">48</div>
+              <div class="text-xs text-gray-500">전체 업무</div>
+            </div>
+          </div>
+          <!-- Completed -->
+          <div class="bg-white rounded-xl border border-gray-100 p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center">
+              <svg class="w-6 h-6 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+            </div>
+            <div>
+              <div class="text-2xl font-bold">32<span class="text-base text-gray-400 font-normal">/48</span></div>
+              <div class="text-xs text-gray-500">완료</div>
+            </div>
+          </div>
+          <!-- In Progress -->
+          <div class="bg-white rounded-xl border border-gray-100 p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center">
+              <svg class="w-6 h-6 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div>
+              <div class="text-2xl font-bold">12</div>
+              <div class="text-xs text-gray-500">진행중</div>
+            </div>
+          </div>
+          <!-- Overdue -->
+          <div class="bg-white rounded-xl border border-gray-100 p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
+              <svg class="w-6 h-6 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+            </div>
+            <div>
+              <div class="text-2xl font-bold">2</div>
+              <div class="text-xs text-gray-500">지연</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex items-center gap-6 border-b">
+          <button class="pb-3 text-sm font-medium text-brand border-b-2 border-brand flex items-center gap-2">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg>
+            업무
+          </button>
+          <button class="pb-3 text-sm text-gray-500 hover:text-gray-700 flex items-center gap-2">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+            일정
+          </button>
+          <button class="pb-3 text-sm text-gray-500 hover:text-gray-700 flex items-center gap-2">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+            알림방
+          </button>
+        </div>
+
+        <!-- Task Table -->
+        <div class="bg-white rounded-xl border border-gray-100 overflow-hidden">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b bg-gray-50/80">
+                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">업무명</th>
+                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider w-[100px]">상태</th>
+                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider w-[120px]">담당자</th>
+                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider w-[140px]">기간</th>
+                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider w-[120px]">진척도</th>
+                <th class="text-center py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider w-[60px]">액션</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Group Header -->
+              <tr class="bg-gray-50/50">
+                <td colspan="6" class="py-2.5 px-4">
+                  <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                    <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                    <svg class="w-4 h-4 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
+                    PT 제작
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 1 -->
+              <tr class="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
+                <td class="py-3.5 px-4">
+                  <div class="pl-8">
+                    <div class="text-sm font-medium text-gray-900">안전교육 기본과정 PT 제작</div>
+                    <div class="text-xs text-gray-400 mt-0.5">슬라이드 30장 구성</div>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">완료</span>
+                </td>
+                <td class="py-3.5 px-4">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 text-xs font-bold">김</div>
+                    <span class="text-sm text-gray-600">김건우</span>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4 text-sm text-gray-500">03.10 — 03.20</td>
+                <td class="py-3.5 px-4">
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                      <div class="h-full rounded-full bg-emerald-500" style="width: 100%"></div>
+                    </div>
+                    <span class="text-xs text-gray-500 w-8 text-right">100%</span>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4 text-center">
+                  <button class="p-1 rounded hover:bg-gray-100 text-gray-400">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                  </button>
+                </td>
+              </tr>
+              <!-- Row 2 -->
+              <tr class="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
+                <td class="py-3.5 px-4">
+                  <div class="pl-8">
+                    <div class="text-sm font-medium text-gray-900">화학물질 취급안전 PT</div>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-sky-50 text-sky-700">진행</span>
+                </td>
+                <td class="py-3.5 px-4">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 text-xs font-bold">박</div>
+                    <span class="text-sm text-gray-600">박지현</span>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4 text-sm text-gray-500">03.15 — 03.28</td>
+                <td class="py-3.5 px-4">
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                      <div class="h-full rounded-full bg-sky-500" style="width: 60%"></div>
+                    </div>
+                    <span class="text-xs text-gray-500 w-8 text-right">60%</span>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4 text-center">
+                  <button class="p-1 rounded hover:bg-gray-100 text-gray-400">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                  </button>
+                </td>
+              </tr>
+              <!-- Row 3 -->
+              <tr class="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
+                <td class="py-3.5 px-4">
+                  <div class="pl-8">
+                    <div class="text-sm font-medium text-gray-900">밀폐공간 작업안전 PT</div>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-600">지연</span>
+                </td>
+                <td class="py-3.5 px-4">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-rose-100 flex items-center justify-center text-rose-700 text-xs font-bold">이</div>
+                    <span class="text-sm text-gray-600">이준혁</span>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4 text-sm text-gray-500">03.08 — 03.18</td>
+                <td class="py-3.5 px-4">
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                      <div class="h-full rounded-full bg-red-500" style="width: 30%"></div>
+                    </div>
+                    <span class="text-xs text-gray-500 w-8 text-right">30%</span>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4 text-center">
+                  <button class="p-1 rounded hover:bg-gray-100 text-gray-400">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Group Header 2 -->
+              <tr class="bg-gray-50/50">
+                <td colspan="6" class="py-2.5 px-4">
+                  <div class="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                    <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                    <svg class="w-4 h-4 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>
+                    영상 제작
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 4 -->
+              <tr class="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
+                <td class="py-3.5 px-4">
+                  <div class="pl-8">
+                    <div class="text-sm font-medium text-gray-900">추락재해 예방 교육영상</div>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-violet-50 text-violet-700">피드백</span>
+                </td>
+                <td class="py-3.5 px-4">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-700 text-xs font-bold">최</div>
+                    <span class="text-sm text-gray-600">최수진</span>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4 text-sm text-gray-500">03.20 — 04.05</td>
+                <td class="py-3.5 px-4">
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                      <div class="h-full rounded-full bg-violet-500" style="width: 75%"></div>
+                    </div>
+                    <span class="text-xs text-gray-500 w-8 text-right">75%</span>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4 text-center">
+                  <button class="p-1 rounded hover:bg-gray-100 text-gray-400">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                  </button>
+                </td>
+              </tr>
+              <!-- Row 5 -->
+              <tr class="hover:bg-gray-50/50 transition-colors">
+                <td class="py-3.5 px-4">
+                  <div class="pl-8">
+                    <div class="text-sm font-medium text-gray-900">전기안전 실습 영상 촬영</div>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">대기</span>
+                </td>
+                <td class="py-3.5 px-4">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 text-xs">—</div>
+                    <span class="text-sm text-gray-400">미배정</span>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4 text-sm text-gray-400">—</td>
+                <td class="py-3.5 px-4">
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                      <div class="h-full rounded-full bg-gray-300" style="width: 0%"></div>
+                    </div>
+                    <span class="text-xs text-gray-500 w-8 text-right">0%</span>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4 text-center">
+                  <button class="p-1 rounded hover:bg-gray-100 text-gray-400">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </main>
+    </div>
+  </div>
+</body>
+</html>

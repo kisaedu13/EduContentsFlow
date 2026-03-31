@@ -44,7 +44,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
             <CardTitle className="text-base">{project.name}</CardTitle>
             <span
               className={cn(
-                "shrink-0 rounded-full px-2 py-0.5 text-xs font-medium",
+                "shrink-0 rounded-full px-2 py-0.5 text-sm font-medium",
                 PROJECT_STATUS_COLORS[project.status],
               )}
             >
@@ -58,7 +58,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           )}
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
             <span>업무: {project._count.tasks}개</span>
             {project.startDate && (
               <span>

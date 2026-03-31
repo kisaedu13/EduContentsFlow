@@ -9,7 +9,7 @@ export default async function NewTemplatePage() {
 
   return (
     <>
-      <Header title="새 템플릿 만들기" />
+      <Header breadcrumb={[{ label: "템플릿" }, { label: "새 템플릿" }]} />
       <main className="flex-1 p-6">
         <div className="mx-auto max-w-2xl">
           <WorkflowEditor />

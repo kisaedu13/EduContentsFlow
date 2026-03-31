@@ -47,9 +47,9 @@ export function TaskNameCell({
           className="flex-shrink-0 p-0.5 rounded hover:bg-muted"
         >
           {isExpanded ? (
-            <ChevronDown className="size-4 text-muted-foreground" />
+            <ChevronDown className="size-5 text-muted-foreground" />
           ) : (
-            <ChevronRight className="size-4 text-muted-foreground" />
+            <ChevronRight className="size-5 text-muted-foreground" />
           )}
         </button>
       ) : (
@@ -70,11 +70,11 @@ export function TaskNameCell({
               setEditing(false);
             }
           }}
-          className="flex-1 min-w-0 rounded border border-input bg-transparent px-1.5 py-0.5 text-sm outline-none focus:border-ring"
+          className="flex-1 min-w-0 rounded border border-input bg-transparent px-1.5 py-0.5 outline-none focus:border-ring"
         />
       ) : (
         <span
-          className="flex-1 min-w-0 truncate text-sm cursor-pointer hover:text-foreground/80 py-0.5 px-1.5 rounded hover:bg-muted/50"
+          className="flex-1 min-w-0 truncate cursor-pointer hover:text-foreground/80 py-0.5 px-1.5 rounded hover:bg-muted/50"
           onClick={() => setEditing(true)}
         >
           {name}

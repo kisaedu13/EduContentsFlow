@@ -15,7 +15,7 @@ const EMAIL_DOMAIN = "educontents.kr";
 const CreateUserSchema = z.object({
   username: z.string().min(1, "아이디를 입력하세요").regex(/^[a-zA-Z0-9_]+$/, "영문, 숫자, 밑줄만 사용 가능합니다"),
   name: z.string().min(1, "이름을 입력하세요"),
-  password: z.string().min(6, "비밀번호는 6자 이상이어야 합니다"),
+  password: z.string().min(1, "비밀번호를 입력하세요"),
   role: z.enum(["ADMIN", "MEMBER"]).default("MEMBER"),
 });
 
@@ -45,8 +45,10 @@ export async function createUser(
     const existing = await prisma.profile.findUnique({ where: { email } });
     if (existing) return { error: "이미 등록된 아이디입니다" };
 
-    // Supabase Auth에 사용자 생성
     const admin = getAdminClient();
+    let userId: string;
+
+    // Supabase Auth에 사용자 생성 시도
     const { data, error } = await admin.auth.admin.createUser({
       email,
       password,
@@ -54,20 +56,56 @@ export async function createUser(
       user_metadata: { name },
     });
 
-    if (error) return { error: `사용자 생성 실패: ${error.message}` };
-
-    // 트리거가 profiles를 자동 생성하므로, role만 업데이트
-    if (role === "ADMIN") {
-      await prisma.profile.update({
-        where: { id: data.user.id },
-        data: { role: "ADMIN" },
-      });
+    if (error) {
+      // Auth에 이미 있지만 profiles에 없는 경우 → 기존 Auth 유저 활용
+      if (error.message.includes("already been registered")) {
+        const { data: list } = await admin.auth.admin.listUsers();
+        const existing = list?.users.find((u) => u.email === email);
+        if (!existing) return { error: "사용자 생성 실패" };
+        userId = existing.id;
+      } else {
+        return { error: `사용자 생성 실패: ${error.message}` };
+      }
+    } else {
+      userId = data.user.id;
     }
+
+    // profiles 테이블에 직접 생성
+    await prisma.profile.create({
+      data: {
+        id: userId,
+        email,
+        name,
+        role,
+      },
+    });
 
     revalidatePath("/team");
     return { success: true, data: { id: data.user.id } };
-  } catch {
-    return { error: "사용자 생성에 실패했습니다" };
+  } catch (e) {
+    console.error("createUser error:", e);
+    return { error: `사용자 생성에 실패했습니다: ${e instanceof Error ? e.message : String(e)}` };
+  }
+}
+
+export async function deleteUser(userId: string): Promise<ActionResult> {
+  try {
+    const profile = await getVerifiedProfile();
+    if (profile.role !== "ADMIN") return { error: "권한이 없습니다" };
+    if (profile.id === userId) return { error: "자신은 삭제할 수 없습니다" };
+
+    // profiles 테이블에서 삭제
+    await prisma.profile.delete({ where: { id: userId } });
+
+    // Supabase Auth에서도 삭제
+    const admin = getAdminClient();
+    await admin.auth.admin.deleteUser(userId);
+
+    revalidatePath("/team");
+    return { success: true, data: null };
+  } catch (e) {
+    console.error("deleteUser error:", e);
+    return { error: "팀원 삭제에 실패했습니다" };
   }
 }
 

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getVerifiedProfile } from "@/lib/auth";
@@ -111,6 +111,10 @@ export async function updateProject(
     });
 
     revalidatePath(`/projects/${id}`);
+    revalidatePath("/projects");
+    revalidatePath("/dashboard");
+    revalidateTag("project-list");
+    revalidateTag("dashboard-data");
 
     return { success: true, data: { id } };
   } catch {

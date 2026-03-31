@@ -24,7 +24,7 @@ export default async function TemplatesPage() {
 
   return (
     <>
-      <Header title="워크플로우 템플릿" />
+      <Header breadcrumb={[{ label: "템플릿" }]} />
       <main className="flex-1 p-6">
         <div className="mb-6 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
