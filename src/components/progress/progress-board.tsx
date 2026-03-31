@@ -157,10 +157,10 @@ export function ProgressBoard({ projectId, tracks, parts }: ProgressBoardProps) 
                               className={cn(
                                 "relative h-7 min-w-[56px] px-1.5 text-[10px] leading-tight transition-colors rounded",
                                 "border hover:border-primary/50",
-                                isDone && "bg-green-100 border-green-300 text-green-800 dark:bg-green-900/50 dark:border-green-700 dark:text-green-300",
-                                isCurrent && !isDone && !isBlocked && "bg-blue-100 border-blue-300 text-blue-800 dark:bg-blue-900/50 dark:border-blue-700 dark:text-blue-300",
-                                isCurrent && isBlocked && "bg-red-100 border-red-300 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-300",
-                                isPast && !isDone && "bg-green-50 border-green-200 text-green-700 dark:bg-green-900/30 dark:border-green-800 dark:text-green-400",
+                                isDone && "bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-900/50 dark:border-emerald-700 dark:text-emerald-300",
+                                isCurrent && !isDone && !isBlocked && "bg-sky-50 border-sky-300 text-sky-800 dark:bg-sky-900/50 dark:border-sky-700 dark:text-sky-300",
+                                isCurrent && isBlocked && "bg-rose-50 border-rose-300 text-rose-800 dark:bg-rose-900/50 dark:border-rose-700 dark:text-rose-300",
+                                isPast && !isDone && "bg-emerald-50/50 border-emerald-200 text-emerald-700 dark:bg-emerald-900/30 dark:border-emerald-800 dark:text-emerald-400",
                                 !isCurrent && !isPast && !isDone && "bg-muted/30 border-border text-muted-foreground",
                                 isUpdating && "opacity-50",
                               )}

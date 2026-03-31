@@ -6,9 +6,9 @@ export const PROJECT_STATUS_LABELS = {
 } as const;
 
 export const PROJECT_STATUS_COLORS = {
-  PREPARING: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300",
-  IN_PROGRESS: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
-  COMPLETED: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300",
+  PREPARING: "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300",
+  IN_PROGRESS: "bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300",
+  COMPLETED: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
   ON_HOLD: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
 } as const;
 
@@ -21,9 +21,9 @@ export const PROGRESS_STATUS_LABELS = {
 
 export const PROGRESS_STATUS_COLORS = {
   NOT_STARTED: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
-  IN_PROGRESS: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
-  COMPLETED: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300",
-  BLOCKED: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300",
+  IN_PROGRESS: "bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300",
+  COMPLETED: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
+  BLOCKED: "bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300",
 } as const;
 
 export const ASSIGNMENT_ROLE_LABELS = {
@@ -48,9 +48,9 @@ export function getAggregateStatus(statuses: ProgressStatusKey[]): ProgressStatu
 
 export const GANTT_BAR_COLORS = {
   NOT_STARTED: "bg-gray-300 dark:bg-gray-600",
-  IN_PROGRESS: "bg-blue-400 dark:bg-blue-500",
-  COMPLETED: "bg-green-400 dark:bg-green-500",
-  BLOCKED: "bg-red-400 dark:bg-red-500",
+  IN_PROGRESS: "bg-sky-400 dark:bg-sky-500",
+  COMPLETED: "bg-emerald-400 dark:bg-emerald-500",
+  BLOCKED: "bg-rose-400 dark:bg-rose-500",
 } as const;
 
 // ─── Task (Flow 스타일) ─────────────────────────────────
@@ -64,16 +64,16 @@ export const TASK_STATUS_LABELS = {
 
 export const TASK_STATUS_COLORS = {
   WAITING: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
-  IN_PROGRESS: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
-  FEEDBACK: "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300",
-  COMPLETE: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300",
+  IN_PROGRESS: "bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300",
+  FEEDBACK: "bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-300",
+  COMPLETE: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
 } as const;
 
 export const TASK_GANTT_BAR_COLORS = {
   WAITING: "bg-gray-300 dark:bg-gray-600",
-  IN_PROGRESS: "bg-blue-400 dark:bg-blue-500",
-  FEEDBACK: "bg-purple-400 dark:bg-purple-500",
-  COMPLETE: "bg-green-400 dark:bg-green-500",
+  IN_PROGRESS: "bg-sky-400 dark:bg-sky-500",
+  FEEDBACK: "bg-violet-400 dark:bg-violet-500",
+  COMPLETE: "bg-emerald-400 dark:bg-emerald-500",
 } as const;
 
 export type TaskStatusKey = "WAITING" | "IN_PROGRESS" | "FEEDBACK" | "COMPLETE";

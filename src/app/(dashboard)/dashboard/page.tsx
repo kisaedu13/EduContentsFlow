@@ -78,10 +78,10 @@ export default async function DashboardPage() {
     : 0;
 
   const statCards = [
-    { label: "전체 프로젝트", value: totalProjects, icon: FolderKanban, color: "text-foreground" },
-    { label: "진행중", value: statusCounts.IN_PROGRESS, icon: PlayCircle, color: "text-blue-500" },
-    { label: "완료", value: statusCounts.COMPLETED, icon: CheckCircle2, color: "text-green-500" },
-    { label: "보류", value: statusCounts.ON_HOLD, icon: PauseCircle, color: "text-gray-400" },
+    { label: "전체 프로젝트", value: totalProjects, icon: FolderKanban, color: "text-primary", bg: "bg-primary/10" },
+    { label: "진행중", value: statusCounts.IN_PROGRESS, icon: PlayCircle, color: "text-sky-600 dark:text-sky-400", bg: "bg-sky-50 dark:bg-sky-950" },
+    { label: "완료", value: statusCounts.COMPLETED, icon: CheckCircle2, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-50 dark:bg-emerald-950" },
+    { label: "보류", value: statusCounts.ON_HOLD, icon: PauseCircle, color: "text-gray-500", bg: "bg-gray-100 dark:bg-gray-800" },
   ];
 
   return (
@@ -103,7 +103,9 @@ export default async function DashboardPage() {
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   {card.label}
                 </CardTitle>
-                <card.icon className={cn("size-5", card.color)} />
+                <div className={cn("flex size-8 items-center justify-center rounded-lg", card.bg)}>
+                  <card.icon className={cn("size-4", card.color)} />
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{card.value}</div>
@@ -122,7 +124,7 @@ export default async function DashboardPage() {
               <div className="flex-1">
                 <div className="h-3 rounded-full bg-muted overflow-hidden">
                   <div
-                    className="h-full rounded-full bg-green-500 transition-all"
+                    className="h-full rounded-full bg-primary transition-all"
                     style={{ width: `${overallPercent}%` }}
                   />
                 </div>

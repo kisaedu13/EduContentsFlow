@@ -6,6 +6,7 @@ import { Trash2, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { createAnnouncement, deleteAnnouncement } from "@/actions/announcements";
 
 interface AnnouncementData {
@@ -116,25 +117,32 @@ export function AnnouncementBoard({
       ) : (
         <div className="space-y-3">
           {optimisticAnnouncements.map((a) => (
-            <div key={a.id} className={`rounded-lg border p-4 space-y-2 ${a.id.startsWith("temp-") ? "opacity-70" : ""}`}>
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <h4 className="font-medium text-sm">{a.title}</h4>
-                  <p className="text-xs text-muted-foreground">
-                    {a.authorName} &middot; {format(new Date(a.createdAt), "yyyy.MM.dd HH:mm")}
-                  </p>
+            <div key={a.id} className={`flex gap-3 ${a.id.startsWith("temp-") ? "opacity-70" : ""}`}>
+              <Avatar className="size-8 shrink-0 mt-0.5">
+                <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
+                  {a.authorName.slice(0, 1)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 rounded-lg border p-3 space-y-1.5">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h4 className="font-medium text-sm">{a.title}</h4>
+                    <p className="text-xs text-muted-foreground">
+                      {a.authorName} &middot; {format(new Date(a.createdAt), "yyyy.MM.dd HH:mm")}
+                    </p>
+                  </div>
+                  {(isAdmin || currentUserId === a.authorId) && !a.id.startsWith("temp-") && (
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(a.id)}
+                      className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
+                    >
+                      <Trash2 className="size-4" />
+                    </button>
+                  )}
                 </div>
-                {(isAdmin || currentUserId === a.authorId) && !a.id.startsWith("temp-") && (
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(a.id)}
-                    className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
-                  >
-                    <Trash2 className="size-4" />
-                  </button>
-                )}
+                <p className="text-sm whitespace-pre-wrap">{a.content}</p>
               </div>
-              <p className="text-sm whitespace-pre-wrap">{a.content}</p>
             </div>
           ))}
         </div>

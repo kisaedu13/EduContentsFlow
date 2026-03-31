@@ -10,8 +10,10 @@ type ActionResult<T = unknown> =
   | { success: true; data: T }
   | { error: string };
 
+const EMAIL_DOMAIN = "educontents.kr";
+
 const CreateUserSchema = z.object({
-  email: z.string().email("올바른 이메일을 입력하세요"),
+  username: z.string().min(1, "아이디를 입력하세요").regex(/^[a-zA-Z0-9_]+$/, "영문, 숫자, 밑줄만 사용 가능합니다"),
   name: z.string().min(1, "이름을 입력하세요"),
   password: z.string().min(6, "비밀번호는 6자 이상이어야 합니다"),
   role: z.enum(["ADMIN", "MEMBER"]).default("MEMBER"),
@@ -36,11 +38,12 @@ export async function createUser(
     const parsed = CreateUserSchema.safeParse(input);
     if (!parsed.success) return { error: parsed.error.issues[0].message };
 
-    const { email, name, password, role } = parsed.data;
+    const { username, name, password, role } = parsed.data;
+    const email = `${username}@${EMAIL_DOMAIN}`;
 
-    // 이미 존재하는 이메일인지 확인
+    // 이미 존재하는 아이디인지 확인
     const existing = await prisma.profile.findUnique({ where: { email } });
-    if (existing) return { error: "이미 등록된 이메일입니다" };
+    if (existing) return { error: "이미 등록된 아이디입니다" };
 
     // Supabase Auth에 사용자 생성
     const admin = getAdminClient();

@@ -8,6 +8,7 @@ import { createUser, updateUserRole } from "@/actions/team";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Dialog,
   DialogContent,
@@ -34,7 +35,7 @@ interface TeamListProps {
 export function TeamList({ members, currentUserId }: TeamListProps) {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<"ADMIN" | "MEMBER">("MEMBER");
@@ -47,7 +48,7 @@ export function TeamList({ members, currentUserId }: TeamListProps) {
     setError(null);
     setSaving(true);
 
-    const result = await createUser({ email, name, password, role });
+    const result = await createUser({ username, name, password, role });
 
     if ("error" in result) {
       setError(result.error);
@@ -55,7 +56,7 @@ export function TeamList({ members, currentUserId }: TeamListProps) {
       return;
     }
 
-    setEmail("");
+    setUsername("");
     setName("");
     setPassword("");
     setRole("MEMBER");
@@ -101,13 +102,13 @@ export function TeamList({ members, currentUserId }: TeamListProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">이메일</Label>
+                <Label htmlFor="username">아이디</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="user@example.com"
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="영문, 숫자"
                   required
                 />
               </div>
@@ -160,7 +161,7 @@ export function TeamList({ members, currentUserId }: TeamListProps) {
           <thead>
             <tr className="border-b bg-muted/50">
               <th className="px-4 py-2 text-left font-medium">이름</th>
-              <th className="px-4 py-2 text-left font-medium">이메일</th>
+              <th className="px-4 py-2 text-left font-medium">아이디</th>
               <th className="px-4 py-2 text-left font-medium">역할</th>
               <th className="px-4 py-2 text-left font-medium">배정 업무</th>
               <th className="px-4 py-2 text-left font-medium">가입일</th>
@@ -172,21 +173,30 @@ export function TeamList({ members, currentUserId }: TeamListProps) {
               const isMe = member.id === currentUserId;
               return (
                 <tr key={member.id} className="border-b last:border-0">
-                  <td className="px-4 py-2.5 font-medium">
-                    {member.name}
-                    {isMe && (
-                      <span className="ml-1.5 text-xs text-muted-foreground">(나)</span>
-                    )}
+                  <td className="px-4 py-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <Avatar className="size-7">
+                        <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
+                          {member.name.slice(0, 1)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="font-medium">
+                        {member.name}
+                        {isMe && (
+                          <span className="ml-1.5 text-xs font-normal text-muted-foreground">(나)</span>
+                        )}
+                      </span>
+                    </div>
                   </td>
                   <td className="px-4 py-2.5 text-muted-foreground">
-                    {member.email}
+                    {member.email.split("@")[0]}
                   </td>
                   <td className="px-4 py-2.5">
                     <span
                       className={cn(
                         "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
                         member.role === "ADMIN"
-                          ? "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300"
+                          ? "bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-300"
                           : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
                       )}
                     >

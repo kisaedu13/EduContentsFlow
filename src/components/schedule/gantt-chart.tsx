@@ -59,7 +59,7 @@ export function GanttChart({
                   key={week.toISOString()}
                   className={cn(
                     "flex-1 border-r px-1 py-2 text-center text-[10px] text-muted-foreground",
-                    isCurrentWeek(week) && "bg-blue-50 font-medium text-blue-700 dark:bg-blue-950 dark:text-blue-300",
+                    isCurrentWeek(week) && "bg-primary/10 font-medium text-primary",
                   )}
                 >
                   {formatWeekLabel(week)}
@@ -126,7 +126,7 @@ export function GanttChart({
                           key={week.toISOString()}
                           className={cn(
                             "flex-1 border-r border-border/30",
-                            isCurrentWeek(week) && "bg-blue-50/50 dark:bg-blue-950/30",
+                            isCurrentWeek(week) && "bg-primary/5",
                           )}
                         />
                       ))}
@@ -135,7 +135,7 @@ export function GanttChart({
                     {/* 오늘 표시선 */}
                     {showToday && (
                       <div
-                        className="absolute top-0 bottom-0 z-10 w-px bg-red-500"
+                        className="absolute top-0 bottom-0 z-10 w-0.5 bg-primary"
                         style={{ left: `${todayPercent}%` }}
                       />
                     )}

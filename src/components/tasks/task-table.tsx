@@ -210,13 +210,13 @@ export function TaskTable({ projectId, tasks: serverTasks, profiles }: TaskTable
     <div className="rounded-lg border overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b bg-muted/50 text-muted-foreground">
-            <th className="text-left py-2 px-2 font-medium">업무명</th>
-            <th className="text-left py-2 px-2 font-medium w-[80px]">상태</th>
-            <th className="text-left py-2 px-2 font-medium w-[100px]">담당자</th>
-            <th className="text-left py-2 px-2 font-medium w-[120px]">시작일</th>
-            <th className="text-left py-2 px-2 font-medium w-[120px]">마감일</th>
-            <th className="text-left py-2 px-2 font-medium w-[100px]">진척도</th>
+          <tr className="border-b bg-muted/50 text-muted-foreground sticky top-0 z-10">
+            <th className="text-left py-2.5 px-2 text-xs font-semibold uppercase tracking-wider">업무명</th>
+            <th className="text-left py-2.5 px-2 text-xs font-semibold uppercase tracking-wider w-[80px]">상태</th>
+            <th className="text-left py-2.5 px-2 text-xs font-semibold uppercase tracking-wider w-[100px]">담당자</th>
+            <th className="text-left py-2.5 px-2 text-xs font-semibold uppercase tracking-wider w-[120px]">시작일</th>
+            <th className="text-left py-2.5 px-2 text-xs font-semibold uppercase tracking-wider w-[120px]">마감일</th>
+            <th className="text-left py-2.5 px-2 text-xs font-semibold uppercase tracking-wider w-[100px]">진척도</th>
           </tr>
         </thead>
         <tbody>

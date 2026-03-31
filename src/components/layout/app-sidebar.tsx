@@ -8,6 +8,7 @@ import {
   Layers,
   Users,
   Calendar,
+  ShieldCheck,
 } from "lucide-react";
 import {
   Sidebar,
@@ -50,8 +51,14 @@ export function AppSidebar({ user }: AppSidebarProps) {
   return (
     <Sidebar>
       <SidebarHeader className="border-b px-4 py-3">
-        <Link href="/dashboard" className="text-base font-bold tracking-tight">
-          EduContentsFlow
+        <Link href="/dashboard" className="flex items-center gap-2.5">
+          <div className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <ShieldCheck className="size-4" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-sm font-bold tracking-tight">EduContentsFlow</span>
+            <span className="text-[10px] leading-tight text-muted-foreground">안전보건교육본부</span>
+          </div>
         </Link>
       </SidebarHeader>
       <SidebarContent>

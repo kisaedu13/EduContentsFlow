@@ -188,14 +188,14 @@ export function TaskGanttChart({ tasks }: TaskGanttChartProps) {
                 <div
                   key={i}
                   className={cn(
-                    "text-center text-[10px] py-1.5 border-r",
-                    isToday(d) && "bg-blue-50 font-bold text-blue-700 dark:bg-blue-950 dark:text-blue-300",
+                    "text-center text-xs py-1.5 border-r",
+                    isToday(d) && "bg-primary/10 font-bold text-primary",
                     isWeekend(d) && !isToday(d) && "bg-muted/50 text-muted-foreground/60",
                   )}
                   style={{ width: DAY_WIDTH }}
                 >
                   <div>{format(d, "d")}</div>
-                  <div className="text-[8px]">{format(d, "EEE").charAt(0)}</div>
+                  <div className="text-[10px]">{format(d, "EEE").charAt(0)}</div>
                 </div>
               ))}
             </div>
@@ -248,7 +248,7 @@ export function TaskGanttChart({ tasks }: TaskGanttChartProps) {
                       key={i}
                       className={cn(
                         "border-r border-border/20",
-                        isToday(d) && "bg-blue-50/50 dark:bg-blue-950/20",
+                        isToday(d) && "bg-primary/5",
                         isWeekend(d) && !isToday(d) && "bg-muted/30",
                       )}
                       style={{ width: DAY_WIDTH, height: 32 }}
@@ -258,7 +258,7 @@ export function TaskGanttChart({ tasks }: TaskGanttChartProps) {
                   {/* 오늘 선 */}
                   {showToday && (
                     <div
-                      className="absolute top-0 bottom-0 z-10 w-px bg-red-500"
+                      className="absolute top-0 bottom-0 z-10 w-0.5 bg-primary"
                       style={{ left: todayOffset * DAY_WIDTH + DAY_WIDTH / 2 }}
                     />
                   )}

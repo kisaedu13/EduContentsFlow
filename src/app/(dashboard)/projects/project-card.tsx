@@ -13,6 +13,13 @@ import {
 } from "@/lib/constants";
 import type { ProjectStatus } from "@/generated/prisma/client";
 
+const STATUS_BORDER_COLORS: Record<ProjectStatus, string> = {
+  PREPARING: "border-l-amber-400",
+  IN_PROGRESS: "border-l-sky-400",
+  COMPLETED: "border-l-emerald-400",
+  ON_HOLD: "border-l-gray-300 dark:border-l-gray-600",
+};
+
 interface ProjectCardProps {
   project: {
     id: string;
@@ -28,13 +35,16 @@ interface ProjectCardProps {
 export function ProjectCard({ project }: ProjectCardProps) {
   return (
     <Link href={`/projects/${project.id}`} prefetch={false}>
-      <Card className="transition-colors hover:bg-muted/50">
+      <Card className={cn(
+        "border-l-[3px] transition-all hover:shadow-md hover:border-l-[3px]",
+        STATUS_BORDER_COLORS[project.status],
+      )}>
         <CardHeader className="pb-2">
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between gap-2">
             <CardTitle className="text-base">{project.name}</CardTitle>
             <span
               className={cn(
-                "rounded-full px-2 py-0.5 text-xs font-medium",
+                "shrink-0 rounded-full px-2 py-0.5 text-xs font-medium",
                 PROJECT_STATUS_COLORS[project.status],
               )}
             >

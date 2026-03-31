@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, FolderKanban } from "lucide-react";
 import { unstable_cache } from "next/cache";
 import { getCurrentProfile } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -46,6 +46,9 @@ export default async function ProjectsPage() {
 
         {projects.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
+            <div className="mb-3 flex size-12 items-center justify-center rounded-xl bg-muted">
+              <FolderKanban className="size-6 text-muted-foreground" />
+            </div>
             <p className="text-sm text-muted-foreground">
               아직 생성된 프로젝트가 없습니다.
             </p>

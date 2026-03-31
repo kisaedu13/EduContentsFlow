@@ -208,7 +208,7 @@ function ProgressCell({
     >
       <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
         <div
-          className="h-full rounded-full bg-blue-500 transition-all"
+          className="h-full rounded-full bg-primary transition-all"
           style={{ width: `${value}%` }}
         />
       </div>
