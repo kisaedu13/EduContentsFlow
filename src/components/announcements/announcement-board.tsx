@@ -110,9 +110,14 @@ export function AnnouncementBoard({
 
       {/* 공지 목록 */}
       {optimisticAnnouncements.length === 0 ? (
-        <div className="py-12 text-center text-muted-foreground text-base">
-          <Megaphone className="size-8 mx-auto mb-2 opacity-40" />
-          아직 공지사항이 없습니다.
+        <div className="flex flex-col items-center py-16 text-center">
+          <div className="mb-3 flex size-14 items-center justify-center rounded-xl bg-muted">
+            <Megaphone className="size-7 text-muted-foreground" />
+          </div>
+          <p className="font-medium">공지사항이 없습니다</p>
+          <p className="mt-1 text-muted-foreground">
+            위의 폼에서 첫 번째 공지를 등록하세요.
+          </p>
         </div>
       ) : (
         <div className="space-y-3">

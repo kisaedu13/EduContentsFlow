@@ -6,6 +6,7 @@ import { TaskRow, type TaskData } from "./task-row";
 import { AddTaskRow } from "./add-task-row";
 import { createTask, updateTask, deleteTask } from "@/actions/tasks";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import type { TaskStatusKey } from "@/lib/constants";
 
 interface RawTask {
@@ -63,6 +64,7 @@ let tempIdCounter = 0;
 
 export function TaskTable({ projectId, tasks: serverTasks, profiles }: TaskTableProps) {
   const [, startTransition] = useTransition();
+  const { showToast } = useToast();
   const [tasks, setTasks] = useState<RawTask[]>(serverTasks);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set(serverTasks.map((t) => t.id)));
   const [addingChildFor, setAddingChildFor] = useState<string | null>(null);
@@ -115,6 +117,7 @@ export function TaskTable({ projectId, tasks: serverTasks, profiles }: TaskTable
     // 백그라운드 서버 호출
     startTransition(async () => {
       await updateTask(taskId, data);
+      if (data.status) showToast("상태가 변경되었습니다");
     });
   }
 
@@ -130,6 +133,7 @@ export function TaskTable({ projectId, tasks: serverTasks, profiles }: TaskTable
 
     startTransition(async () => {
       await deleteTask(taskId);
+      showToast("업무가 삭제되었습니다");
     });
   }
 
@@ -244,16 +248,16 @@ export function TaskTable({ projectId, tasks: serverTasks, profiles }: TaskTable
         )}
       </div>
 
-      <div className="rounded-lg border overflow-x-auto">
+      <div className="border border-[#E4E4E7] rounded-[10px] overflow-hidden bg-white">
         <table className="w-full">
           <thead>
-            <tr className="border-b bg-muted/50 text-muted-foreground sticky top-0 z-10">
-              <th className="text-left py-2.5 px-2 text-sm font-semibold uppercase tracking-wider">업무명</th>
-              <th className="text-left py-2.5 px-2 text-sm font-semibold uppercase tracking-wider w-[100px]">상태</th>
-              <th className="text-left py-2.5 px-2 text-sm font-semibold uppercase tracking-wider w-[100px]">담당자</th>
-              <th className="text-left py-2.5 px-2 text-sm font-semibold uppercase tracking-wider w-[120px]">시작일</th>
-              <th className="text-left py-2.5 px-2 text-sm font-semibold uppercase tracking-wider w-[120px]">마감일</th>
-              <th className="text-left py-2.5 px-2 text-sm font-semibold uppercase tracking-wider w-[100px]">진척도</th>
+            <tr className="bg-[#FAFAFA] sticky top-0 z-10">
+              <th className="text-left p-[10px_16px] text-[13px] font-medium text-[#71717A]">업무명</th>
+              <th className="text-left p-[10px_16px] text-[13px] font-medium text-[#71717A] w-[100px]">상태</th>
+              <th className="text-left p-[10px_16px] text-[13px] font-medium text-[#71717A] w-[100px]">담당자</th>
+              <th className="text-left p-[10px_16px] text-[13px] font-medium text-[#71717A] w-[120px]">시작일</th>
+              <th className="text-left p-[10px_16px] text-[13px] font-medium text-[#71717A] w-[120px]">마감일</th>
+              <th className="text-left p-[10px_16px] text-[13px] font-medium text-[#71717A] w-[100px]">진척도</th>
             </tr>
           </thead>
           <tbody>
@@ -276,8 +280,14 @@ export function TaskTable({ projectId, tasks: serverTasks, profiles }: TaskTable
         </table>
 
         {tasks.length === 0 && (
-          <div className="py-12 text-center text-muted-foreground text-sm">
-            업무가 없습니다. 오른쪽 위 &quot;업무 추가&quot; 버튼으로 시작하세요.
+          <div className="flex flex-col items-center py-16 text-center">
+            <div className="mb-3 flex size-14 items-center justify-center rounded-xl bg-muted">
+              <Plus className="size-7 text-muted-foreground" />
+            </div>
+            <p className="font-medium">업무가 없습니다</p>
+            <p className="mt-1 text-muted-foreground">
+              오른쪽 위 &quot;업무 추가&quot; 버튼으로 시작하세요.
+            </p>
           </div>
         )}
       </div>
@@ -321,11 +331,29 @@ function TaskRowWithChild({
         onAddSibling={onAddSibling}
       />
       {addingChildFor === task.id && (
-        <AddTaskRow
-          onAdd={(name) => onAddChildSubmit(task.id, name)}
-          depth={task.depth + 1}
-          placeholder="하위 업무 추가..."
-        />
+        <tr className="border-b border-[#F4F4F5]">
+          <td colSpan={6} className="p-[8px_16px]">
+            <div style={{ paddingLeft: (task.depth + 1) * 24 + 24 }}>
+              <input
+                autoFocus
+                type="text"
+                placeholder="하위 업무명 입력 후 Enter..."
+                className="w-full max-w-[300px] px-2 py-1 rounded border border-[#E4E4E7] text-[14px] outline-none focus:border-[#4F46E5] focus:ring-[3px] focus:ring-[#4F46E5]/10 transition-all"
+                onBlur={(e) => {
+                  onAddChildSubmit(task.id, e.target.value.trim());
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    onAddChildSubmit(task.id, (e.target as HTMLInputElement).value.trim());
+                  }
+                  if (e.key === "Escape") {
+                    onAddChildSubmit(task.id, "");
+                  }
+                }}
+              />
+            </div>
+          </td>
+        </tr>
       )}
     </>
   );

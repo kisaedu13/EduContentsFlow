@@ -11,10 +11,21 @@
 ## 컨벤션
 - 한국어 전용 UI (i18n 불필요)
 - 날짜 포맷: YYYY.MM.DD
-- 폰트: Pretendard (self-hosted woff2)
+- 폰트: Pretendard Variable (CDN + self-hosted woff2)
 - Server Components 기본, Client Components는 "use client" 명시
 - Server Actions으로 mutation ("use server")
 - Prisma만 데이터 접근 (Supabase Client는 Auth 전용)
+
+## 디자인 시스템
+- **레퍼런스**: `docs/DESIGN_INSTRUCTIONS.md`, `docs/design-mockup-v2.html`
+- **배경**: 페이지 `#F7F7F8`, 카드/테이블 `#FFFFFF`
+- **Primary**: `#4F46E5` (indigo), hover `#4338CA`
+- **사이드바**: `#18181B` (다크), 네비 `#A1A1AA`, active `#27272A` + 흰색
+- **카드**: border 없이 `shadow-card` 사용, hover 시 `shadow-card-hover`
+- **테이블**: border + rounded-[10px] 컨테이너, 헤더 `#FAFAFA`, 행 hover `#FAFAFE`
+- **상태 뱃지**: pill + 6px dot (준비중=amber, 진행중=blue, 완료=emerald, 보류=gray, 대기=zinc)
+- **타이포**: 제목 22-24px/700, 본문 14-15px, 캡션 12-13px
+- **전역**: 모든 인터랙티브 요소에 `transition-all duration-150`
 
 ## 핵심 데이터 모델
 - **Task** (계층형 업무): projectId, parentId(자기참조), name, status(WAITING/IN_PROGRESS/FEEDBACK/COMPLETE), assigneeId, startDate, endDate, progress(0~100), depth, sortOrder
@@ -27,9 +38,12 @@
 1. 템플릿 선택 (선택사항) → TemplateTask 계층구조를 Task로 복사
 2. 빈 프로젝트도 생성 가능 → 사용자가 수동으로 업무 추가
 
-## 로그인
-- 아이디만 입력 (도메인 @educontents.kr 내부 처리)
+## 로그인 / 팀원 관리
+- 아이디만 입력 (도메인 @educontents.kr 내부 처리, Supabase Auth 이메일 형식 필수)
 - admin / admin1234
+- 팀원 추가: 이름 + 아이디 + 비밀번호 (Supabase Auth + profiles 동시 생성)
+- 팀원 삭제: Supabase Auth + profiles 동시 삭제
+- 비밀번호 변경: UserNav 드롭다운에서 가능 (Supabase 최소 6자 제한)
 
 ## 환경변수
 - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`

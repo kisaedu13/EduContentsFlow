@@ -7,7 +7,6 @@ import {
   FolderKanban,
   Layers,
   Users,
-  ShieldCheck,
   Plus,
 } from "lucide-react";
 import {
@@ -21,7 +20,6 @@ import {
   SidebarMenuItem,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
 import { UserNav } from "./user-nav";
 
 const navItems = [
@@ -49,14 +47,14 @@ export function AppSidebar({ user }: AppSidebarProps) {
 
   return (
     <Sidebar>
-      <SidebarHeader className="border-b border-sidebar-border px-4 py-4">
+      <SidebarHeader className="border-b border-[#27272A] px-4 py-5">
         <Link href="/dashboard" className="flex items-center gap-2.5">
-          <div className="flex size-8 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <ShieldCheck className="size-4.5" />
+          <div className="flex size-[30px] items-center justify-center rounded-lg bg-[#4F46E5] text-white text-[13px] font-bold">
+            E
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-bold tracking-tight">EduContentsFlow</span>
-            <span className="text-xs leading-tight opacity-50">안전보건교육본부</span>
+            <span className="text-[14px] font-semibold text-white">EduContentsFlow</span>
+            <span className="text-[11px] text-[#71717A]">안전보건교육본부</span>
           </div>
         </Link>
       </SidebarHeader>
@@ -69,9 +67,10 @@ export function AppSidebar({ user }: AppSidebarProps) {
                   <SidebarMenuButton
                     render={<Link href={item.href} prefetch={false} />}
                     isActive={pathname.startsWith(item.href)}
+                    className="transition-all duration-150"
                   >
-                    <item.icon className="size-5" />
-                    <span>{item.title}</span>
+                    <item.icon className="size-[18px]" />
+                    <span className="text-[14px]">{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -79,16 +78,15 @@ export function AppSidebar({ user }: AppSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t border-sidebar-border space-y-2 p-3">
+      <SidebarFooter className="border-t border-[#27272A] space-y-3 p-3">
         {isAdmin && (
-          <Button
-            render={<Link href="/projects/new" />}
-            className="w-full justify-center"
-            size="sm"
+          <Link
+            href="/projects/new"
+            className="flex items-center justify-center gap-1.5 w-full bg-[#4F46E5] hover:bg-[#4338CA] text-white rounded-lg py-2.5 text-[14px] font-medium transition-all duration-150"
           >
             <Plus className="size-4" />
             새 프로젝트
-          </Button>
+          </Link>
         )}
         <UserNav user={user} />
       </SidebarFooter>

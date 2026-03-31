@@ -6,10 +6,17 @@ export const PROJECT_STATUS_LABELS = {
 } as const;
 
 export const PROJECT_STATUS_COLORS = {
-  PREPARING: "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300",
-  IN_PROGRESS: "bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300",
-  COMPLETED: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
-  ON_HOLD: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+  PREPARING: "bg-[#FFFBEB] text-[#B45309]",
+  IN_PROGRESS: "bg-[#EFF6FF] text-[#1D4ED8]",
+  COMPLETED: "bg-[#ECFDF5] text-[#047857]",
+  ON_HOLD: "bg-[#F3F4F6] text-[#374151]",
+} as const;
+
+export const STATUS_DOT_COLORS = {
+  PREPARING: "bg-[#F59E0B]",
+  IN_PROGRESS: "bg-[#3B82F6]",
+  COMPLETED: "bg-[#10B981]",
+  ON_HOLD: "bg-[#6B7280]",
 } as const;
 
 export const PROGRESS_STATUS_LABELS = {
@@ -63,10 +70,17 @@ export const TASK_STATUS_LABELS = {
 } as const;
 
 export const TASK_STATUS_COLORS = {
-  WAITING: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
-  IN_PROGRESS: "bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300",
-  FEEDBACK: "bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-300",
-  COMPLETE: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
+  WAITING: "bg-[#F4F4F5] text-[#52525B]",
+  IN_PROGRESS: "bg-[#EFF6FF] text-[#1D4ED8]",
+  FEEDBACK: "bg-[#F5F3FF] text-[#6D28D9]",
+  COMPLETE: "bg-[#ECFDF5] text-[#047857]",
+} as const;
+
+export const TASK_STATUS_DOT_COLORS = {
+  WAITING: "bg-[#A1A1AA]",
+  IN_PROGRESS: "bg-[#3B82F6]",
+  FEEDBACK: "bg-[#8B5CF6]",
+  COMPLETE: "bg-[#10B981]",
 } as const;
 
 export const TASK_GANTT_BAR_COLORS = {

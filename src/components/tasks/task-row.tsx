@@ -50,41 +50,13 @@ export function TaskRow({
 
   return (
     <tr
-      className="border-b border-border/50 hover:bg-muted/30 group"
+      className="group hover:bg-[#FAFAFE] transition-colors duration-150"
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
     >
-      {/* 업무명 + 왼쪽 액션 버튼 */}
-      <td className="py-2.5 px-2 min-w-[300px]">
-        <div className="flex items-center gap-0.5" style={{ paddingLeft: task.depth * 24 }}>
-          {/* 액션 버튼 (왼쪽) */}
-          <div className={`flex items-center gap-0 flex-shrink-0 ${showActions ? "opacity-100" : "opacity-0"} transition-opacity`}>
-            <button
-              type="button"
-              title="하위 업무 추가"
-              onClick={() => onAddChild(task.id, "")}
-              className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
-            >
-              <CornerDownRight className="size-4" />
-            </button>
-            <button
-              type="button"
-              title="같은 레벨 추가"
-              onClick={() => onAddSibling(task.id, "")}
-              className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
-            >
-              <Plus className="size-4" />
-            </button>
-            <button
-              type="button"
-              title="삭제"
-              onClick={() => onDelete(task.id)}
-              className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
-            >
-              <Trash2 className="size-4" />
-            </button>
-          </div>
-
+      {/* 업무명 + 액션 버튼 */}
+      <td className="p-[12px_16px] border-b border-[#F4F4F5] text-[14px] min-w-[300px]">
+        <div className="flex items-center" style={{ paddingLeft: task.depth * 24 }}>
           {/* 이름 셀 */}
           <TaskNameCell
             name={task.name}
@@ -94,11 +66,39 @@ export function TaskRow({
             onToggleExpand={onToggleExpand}
             onNameChange={(name) => onUpdate(task.id, { name })}
           />
+
+          {/* 액션 버튼 (업무명 뒤, hover 시 표시) */}
+          <div className={`flex items-center gap-1 ml-2 flex-shrink-0 ${showActions ? "opacity-100" : "opacity-0"} transition-opacity duration-150`}>
+            <button
+              type="button"
+              title="하위 업무 추가"
+              onClick={() => onAddChild(task.id, "")}
+              className="size-6 rounded flex items-center justify-center text-[#A1A1AA] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-all duration-150"
+            >
+              <CornerDownRight className="size-[14px]" />
+            </button>
+            <button
+              type="button"
+              title="같은 레벨 추가"
+              onClick={() => onAddSibling(task.id, "")}
+              className="size-6 rounded flex items-center justify-center text-[#A1A1AA] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-all duration-150"
+            >
+              <Plus className="size-[14px]" />
+            </button>
+            <button
+              type="button"
+              title="삭제"
+              onClick={() => onDelete(task.id)}
+              className="size-6 rounded flex items-center justify-center text-[#A1A1AA] hover:bg-red-50 hover:text-red-600 transition-all duration-150"
+            >
+              <Trash2 className="size-[14px]" />
+            </button>
+          </div>
         </div>
       </td>
 
       {/* 상태 */}
-      <td className="py-2.5 px-2 w-[100px]">
+      <td className="p-[12px_16px] border-b border-[#F4F4F5] text-[14px] w-[100px]">
         <TaskStatusBadge
           status={task.status}
           onChange={(status) => onUpdate(task.id, { status })}
@@ -106,7 +106,7 @@ export function TaskRow({
       </td>
 
       {/* 담당자 */}
-      <td className="py-2.5 px-2 w-[100px]">
+      <td className="p-[12px_16px] border-b border-[#F4F4F5] text-[14px] w-[100px]">
         <TaskAssigneeCell
           assigneeId={task.assigneeId}
           assigneeName={task.assigneeName}
@@ -116,7 +116,7 @@ export function TaskRow({
       </td>
 
       {/* 시작일 */}
-      <td className="py-2.5 px-2 w-[120px]">
+      <td className="p-[12px_16px] border-b border-[#F4F4F5] text-[14px] w-[120px]">
         <DateCell
           value={task.startDate}
           onChange={(startDate) => onUpdate(task.id, { startDate })}
@@ -124,7 +124,7 @@ export function TaskRow({
       </td>
 
       {/* 마감일 */}
-      <td className="py-2.5 px-2 w-[120px]">
+      <td className="p-[12px_16px] border-b border-[#F4F4F5] text-[14px] w-[120px]">
         <DateCell
           value={task.endDate}
           onChange={(endDate) => onUpdate(task.id, { endDate })}
@@ -132,7 +132,7 @@ export function TaskRow({
       </td>
 
       {/* 진척도 */}
-      <td className="py-2.5 px-2 w-[100px]">
+      <td className="p-[12px_16px] border-b border-[#F4F4F5] text-[14px] w-[100px]">
         <ProgressCell
           value={task.progress}
           onChange={(progress) => onUpdate(task.id, { progress })}
@@ -204,15 +204,15 @@ function ProgressCell({
         setTemp(String(value));
         setEditing(true);
       }}
-      className="flex items-center gap-1.5 cursor-pointer py-0.5 px-1 rounded hover:bg-muted/50"
+      className="flex items-center gap-2 cursor-pointer py-0.5 px-1 rounded hover:bg-[#F4F4F5] justify-end"
     >
-      <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+      <div className="w-[60px] h-[3px] rounded-full bg-[#F4F4F5] overflow-hidden">
         <div
-          className="h-full rounded-full bg-primary transition-all"
+          className={`h-full rounded-full transition-all ${value >= 100 ? "bg-[#10B981]" : "bg-[#4F46E5]"}`}
           style={{ width: `${value}%` }}
         />
       </div>
-      <span className="text-sm text-muted-foreground whitespace-nowrap">{value}%</span>
+      <span className="text-[12px] text-[#A1A1AA] w-7 text-right whitespace-nowrap">{value}%</span>
     </div>
   );
 }

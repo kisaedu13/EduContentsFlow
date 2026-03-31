@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Plus } from "lucide-react";
+import { Plus, Layers } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Header } from "@/components/layout/header";
@@ -37,9 +37,13 @@ export default async function TemplatesPage() {
         </div>
 
         {templates.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
-            <p className="text-sm text-muted-foreground">
-              아직 생성된 템플릿이 없습니다.
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-16 text-center">
+            <div className="mb-3 flex size-14 items-center justify-center rounded-xl bg-muted">
+              <Layers className="size-7 text-muted-foreground" />
+            </div>
+            <p className="font-medium">템플릿이 없습니다</p>
+            <p className="mt-1 text-muted-foreground">
+              반복 사용하는 업무 구조를 템플릿으로 저장하세요.
             </p>
             <Button
               render={<Link href="/templates/new" />}

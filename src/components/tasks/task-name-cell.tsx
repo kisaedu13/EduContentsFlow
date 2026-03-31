@@ -39,7 +39,7 @@ export function TaskNameCell({
   }
 
   return (
-    <div className="flex items-center gap-1 min-w-0 flex-1">
+    <div className="flex items-center gap-1 min-w-0">
       {hasChildren ? (
         <button
           type="button"
@@ -70,11 +70,11 @@ export function TaskNameCell({
               setEditing(false);
             }
           }}
-          className="flex-1 min-w-0 rounded border border-input bg-transparent px-1.5 py-0.5 outline-none focus:border-ring"
+          className="min-w-[120px] rounded border border-input bg-transparent px-1.5 py-0.5 outline-none focus:border-ring"
         />
       ) : (
         <span
-          className="flex-1 min-w-0 truncate cursor-pointer hover:text-foreground/80 py-0.5 px-1.5 rounded hover:bg-muted/50"
+          className="truncate cursor-pointer hover:text-foreground/80 py-0.5 px-1.5 rounded hover:bg-[#F4F4F5]"
           onClick={() => setEditing(true)}
         >
           {name}

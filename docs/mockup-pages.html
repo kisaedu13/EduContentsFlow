@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduContentsFlow — Page Mockups</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Pretendard Variable', -apple-system, sans-serif;
+    background: #E8E8EC;
+    color: #18181B;
+    -webkit-font-smoothing: antialiased;
+    padding: 32px;
+  }
+
+  /* Page selector */
+  .page-selector {
+    max-width: 1400px;
+    margin: 0 auto 24px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .page-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    background: #fff;
+    color: #71717A;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    transition: all 0.15s;
+  }
+  .page-btn:hover { color: #18181B; }
+  .page-btn.active {
+    background: #18181B;
+    color: #fff;
+  }
+
+  /* Frame */
+  .frame {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #F7F7F8;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    display: none;
+  }
+  .frame.active { display: block; }
+  .frame-bar {
+    background: #fff;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #E4E4E7;
+  }
+  .dot { width:10px; height:10px; border-radius:50%; background:#E4E4E7; }
+  .frame-url { flex:1; text-align:center; font-size:12px; color:#A1A1AA; }
+  .frame-body { display: flex; min-height: 640px; }
+
+  /* === SIDEBAR === */
+  .sidebar {
+    width: 240px;
+    background: #18181B;
+    padding: 20px 12px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 10px;
+    margin-bottom: 28px;
+  }
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, #4F46E5, #7C3AED);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #fff;
+    font-weight: 700;
+  }
+  .logo-text { font-size: 15px; font-weight: 600; color: #FAFAFA; line-height: 1.3; }
+  .logo-sub { font-size: 11px; color: #71717A; font-weight: 400; }
+  
+  .nav-section { margin-bottom: 8px; }
+  .nav-label {
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #52525B;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 7px;
+    color: #A1A1AA;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.12s;
+    margin-bottom: 2px;
+  }
+  .nav-item:hover { background: #27272A; color: #D4D4D8; }
+  .nav-item.active { background: #27272A; color: #FAFAFA; font-weight: 500; }
+  .nav-icon { width:18px; height:18px; opacity:0.6; flex-shrink:0; }
+  .nav-item.active .nav-icon { opacity:1; }
+
+  .sidebar-bottom {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid #27272A;
+  }
+  .new-project-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 10px;
+    background: #4F46E5;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: background 0.15s;
+    font-family: inherit;
+  }
+  .new-project-btn:hover { background: #4338CA; }
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+  }
+  .user-profile:hover { background: #27272A; }
+  .user-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: #3F3F46;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #A1A1AA;
+  }
+  .user-name { font-size: 14px; color: #FAFAFA; font-weight: 500; line-height:1.3; }
+  .user-role { font-size: 12px; color: #71717A; }
+
+  /* === MAIN AREA === */
+  .main { flex:1; padding: 28px 36px; overflow-y: auto; background: #F7F7F8; }
+
+  /* Breadcrumb */
+  .breadcrumb { font-size: 13px; color: #A1A1AA; margin-bottom: 16px; }
+  .breadcrumb a { color: #A1A1AA; text-decoration: none; }
+  .breadcrumb a:hover { color: #71717A; }
+  .breadcrumb .current { color: #71717A; }
+
+  /* Page header */
+  .page-title { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 4px; }
+  .page-desc { font-size: 15px; color: #71717A; margin-bottom: 28px; }
+
+  /* Stat cards */
+  .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 32px; }
+  .stat {
+    background: #fff;
+    border-radius: 10px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.02);
+    transition: box-shadow 0.15s;
+  }
+  .stat:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.03); }
+  .stat-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    font-size: 16px;
+  }
+  .stat-label { font-size: 13px; color: #71717A; font-weight: 500; margin-bottom: 4px; }
+  .stat-num { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+
+  /* Section header */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .section-title { font-size: 17px; font-weight: 600; }
+
+  /* Project cards grid */
+  .project-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .project-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.02);
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .project-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.03);
+    transform: translateY(-1px);
+  }
+  .pc-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .pc-name { font-size: 16px; font-weight: 600; }
+  .pc-desc { font-size: 14px; color: #71717A; line-height: 1.5; }
+  .pc-footer { display: flex; justify-content: space-between; font-size: 13px; color: #A1A1AA; }
+
+  /* Progress bar */
+  .progress { width:100%; height:4px; background:#F4F4F5; border-radius:100px; overflow:hidden; }
+  .progress-fill { height:100%; border-radius:100px; transition: width 0.3s; }
+
+  /* Badges */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge-dot { width:7px; height:7px; border-radius:50%; }
+  .badge-ready { background:#FFFBEB; color:#92400E; }
+  .badge-ready .badge-dot { background:#F59E0B; }
+  .badge-progress { background:#EFF6FF; color:#1E40AF; }
+  .badge-progress .badge-dot { background:#3B82F6; }
+  .badge-done { background:#ECFDF5; color:#065F46; }
+  .badge-done .badge-dot { background:#10B981; }
+  .badge-hold { background:#F3F4F6; color:#374151; }
+  .badge-hold .badge-dot { background:#6B7280; }
+  .badge-wait { background:#F4F4F5; color:#52525B; }
+  .badge-wait .badge-dot { background:#A1A1AA; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 16px; border-radius: 7px;
+    font-size: 14px; font-weight: 500; font-family: inherit;
+    cursor: pointer; transition: all 0.15s; border: none;
+  }
+  .btn-primary { background:#4F46E5; color:#fff; }
+  .btn-primary:hover { background:#4338CA; }
+  .btn-secondary { background:#fff; color:#18181B; border: 1px solid #E4E4E7; }
+  .btn-secondary:hover { background:#F7F7F8; }
+  .btn-ghost { background:transparent; color:#71717A; }
+  .btn-ghost:hover { background:#F4F4F5; color:#18181B; }
+  .btn-sm { padding: 7px 12px; font-size: 13px; }
+
+  /* Avatar */
+  .avatar {
+    width:28px; height:28px; border-radius:50%;
+    display:inline-flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:600; color:#fff; flex-shrink:0;
+  }
+
+  /* Tabs */
+  .tabs { display:flex; gap:0; border-bottom:1px solid #E4E4E7; margin-bottom:24px; }
+  .tab {
+    padding: 12px 18px; font-size: 14px; color: #71717A;
+    border-bottom: 2px solid transparent; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.12s;
+  }
+  .tab:hover { color:#18181B; }
+  .tab.active { color:#18181B; border-bottom-color:#4F46E5; font-weight:500; }
+
+  /* === TABLE (핵심 개선 영역) === */
+  .table-container {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.02);
+    overflow: hidden;
+  }
+  .table { width:100%; border-collapse:collapse; }
+  .table thead { background:#FAFAFA; }
+  .table th {
+    text-align:left; padding:11px 16px;
+    font-size:12px; font-weight:600; color:#71717A;
+    border-bottom:1px solid #E4E4E7;
+    text-transform:uppercase; letter-spacing:0.3px;
+  }
+  .table th:last-child { text-align:right; }
+  .table td {
+    padding:14px 16px;
+    border-bottom:1px solid #F4F4F5;
+    font-size:14px;
+    vertical-align:middle;
+  }
+  .table tbody tr { transition: background 0.1s; position: relative; }
+  .table tbody tr:hover { background:#FAFAFF; }
+  .table tbody tr:last-child td { border-bottom:none; }
+
+  /* 업무 행 - 액션 버튼은 hover시에만 오른쪽 끝에 표시 */
+  .task-row { position: relative; }
+  .task-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+  }
+  .task-toggle {
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    color: #A1A1AA;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.12s;
+    flex-shrink: 0;
+  }
+  .task-toggle:hover { background:#F4F4F5; color:#18181B; }
+
+  /* 하위 업무 들여쓰기 */
+  .subtask-name {
+    padding-left: 36px;
+    color: #52525B;
+    font-weight: 400;
+  }
+
+  /* hover시 나타나는 액션 버튼 */
+  .row-actions {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.12s;
+    background: linear-gradient(90deg, transparent, #FAFAFF 8px, #FAFAFF);
+    padding-left: 24px;
+  }
+  .task-row:hover .row-actions { opacity: 1; }
+  .action-btn {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    border: 1px solid #E4E4E7;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #71717A;
+    font-size: 13px;
+    transition: all 0.12s;
+  }
+  .action-btn:hover { background:#F4F4F5; color:#18181B; border-color:#D4D4D8; }
+  .action-btn.danger:hover { background:#FEF2F2; color:#DC2626; border-color:#FECACA; }
+
+  /* 하위 업무 추가 - 깔끔한 인라인 스타일 */
+  .add-subtask-row td {
+    padding: 8px 16px !important;
+    border-bottom: 1px solid #F4F4F5 !important;
+  }
+  .add-subtask-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    margin-left: 28px;
+    font-size: 13px;
+    color: #A1A1AA;
+    background: transparent;
+    border: 1px dashed transparent;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .add-subtask-btn:hover {
+    color: #4F46E5;
+    background: #EEF2FF;
+    border-color: #C7D2FE;
+  }
+
+  /* 진척도 셀 */
+  .progress-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .progress-mini { width:72px; }
+  .progress-text { font-size:13px; color:#A1A1AA; width:32px; text-align:right; }
+
+  /* 날짜 없음 표시 */
+  .empty-date { color: #D4D4D8; }
+
+  /* === FORM === */
+  .form-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.02);
+    max-width: 580px;
+  }
+  .form-group { margin-bottom: 22px; }
+  .form-label { display:block; font-size:14px; font-weight:600; margin-bottom:8px; }
+  .form-optional { color:#A1A1AA; font-weight:400; }
+  .form-input {
+    width:100%; padding:11px 14px;
+    border:1px solid #E4E4E7; border-radius:8px;
+    font-size:15px; font-family:inherit; color:#18181B;
+    background:#fff; outline:none; transition:all 0.15s;
+  }
+  .form-input::placeholder { color:#A1A1AA; }
+  .form-input:focus { border-color:#4F46E5; box-shadow:0 0 0 3px rgba(79,70,229,0.1); }
+  .form-textarea { resize:vertical; min-height:100px; }
+  .form-hint { font-size:13px; color:#A1A1AA; margin-top:6px; }
+
+  /* Gantt */
+  .gantt-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+  }
+  .gantt-nav {
+    width:32px; height:32px; border-radius:7px;
+    border:1px solid #E4E4E7; background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; color:#71717A; font-size:16px;
+  }
+  .gantt-nav:hover { background:#F7F7F8; }
+  .gantt-today-btn {
+    padding:6px 14px; border-radius:7px;
+    border:1px solid #E4E4E7; background:#fff;
+    font-size:13px; font-family:inherit; cursor:pointer;
+    font-weight:500; color:#18181B;
+  }
+  .gantt-range { font-size:14px; color:#71717A; }
+
+  .gantt-table {
+    background:#fff; border-radius:10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.02);
+    overflow-x:auto;
+  }
+  .gantt-grid { width:100%; border-collapse:collapse; min-width:1200px; }
+  .gantt-grid th {
+    padding:8px 4px; font-size:11px; font-weight:500;
+    color:#A1A1AA; border-bottom:1px solid #E4E4E7;
+    text-align:center; min-width:36px;
+  }
+  .gantt-grid th.today { color:#4F46E5; font-weight:700; }
+  .gantt-grid td { padding:10px 4px; border-bottom:1px solid #F4F4F5; position:relative; }
+  .gantt-grid td.task-col { padding:10px 16px; font-size:14px; min-width:200px; white-space:nowrap; }
+  .gantt-bar {
+    height:24px; border-radius:6px;
+    position:absolute; top:50%; transform:translateY(-50%);
+  }
+  .gantt-bar-progress { background: linear-gradient(90deg, #4F46E5, #7C3AED); }
+  .gantt-bar-empty {
+    background:#E4E4E7; border:1px dashed #D4D4D8;
+    height:2px; border-radius:0;
+  }
+  .today-line {
+    position:absolute; top:0; bottom:0;
+    width:2px; background:#4F46E5;
+    left:50%; z-index:2;
+  }
+
+  /* Utility */
+  .flex { display:flex; }
+  .items-center { align-items:center; }
+  .justify-between { justify-content:space-between; }
+  .gap-4 { gap:4px; }
+  .gap-8 { gap:8px; }
+  .gap-12 { gap:12px; }
+  .gap-16 { gap:16px; }
+  .mb-4 { margin-bottom:4px; }
+  .mb-8 { margin-bottom:8px; }
+  .mb-16 { margin-bottom:16px; }
+  .mb-24 { margin-bottom:24px; }
+  .mb-28 { margin-bottom:28px; }
+</style>
+</head>
+<body>
+
+<div class="page-selector">
+  <button class="page-btn active" data-page="dashboard">대시보드</button>
+  <button class="page-btn" data-page="projects">프로젝트 목록</button>
+  <button class="page-btn" data-page="detail">프로젝트 상세 (업무)</button>
+  <button class="page-btn" data-page="gantt">프로젝트 상세 (일정)</button>
+  <button class="page-btn" data-page="template">템플릿 생성</button>
+</div>
+
+<!-- ============================================================ -->
+<!-- 대시보드 -->
+<!-- ============================================================ -->
+<div class="frame active" id="dashboard">
+  <div class="frame-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="frame-url">edu-contents-flow.vercel.app</div></div>
+  <div class="frame-body">
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">E</div>
+        <div><div class="logo-text">EduContentsFlow</div><div class="logo-sub">안전보건교육본부</div></div>
+      </div>
+      <nav class="nav-section">
+        <div class="nav-item active"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5.5" height="5.5" rx="1.5"/><rect x="10.5" y="2" width="5.5" height="5.5" rx="1.5"/><rect x="2" y="10.5" width="5.5" height="5.5" rx="1.5"/><rect x="10.5" y="10.5" width="5.5" height="5.5" rx="1.5"/></svg>대시보드</div>
+        <div class="nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="14" height="12" rx="2"/><path d="M2 7h14"/></svg>프로젝트</div>
+        <div class="nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="2" width="12" height="14" rx="2"/><path d="M7 6h4M7 9h3" stroke-linecap="round"/></svg>템플릿</div>
+        <div class="nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="6" r="3"/><path d="M3 16c0-3 2.5-5.5 6-5.5s6 2.5 6 5.5"/></svg>팀 관리</div>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="new-project-btn">+ 새 프로젝트</button>
+        <div class="user-profile">
+          <div class="user-avatar">관</div>
+          <div><div class="user-name">관리자</div><div class="user-role">admin</div></div>
+        </div>
+      </div>
+    </aside>
+    <main class="main">
+      <h1 class="page-title">안녕하세요, 관리자님 👋</h1>
+      <p class="page-desc">교육 콘텐츠 제작 현황을 한눈에 확인하세요.</p>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-icon" style="background:#EEF2FF;"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="3" width="14" height="12" rx="2" stroke="#4F46E5" stroke-width="1.5"/><path d="M2 7h14" stroke="#4F46E5" stroke-width="1.5"/></svg></div>
+          <div class="stat-label">전체 프로젝트</div>
+          <div class="stat-num">5</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon" style="background:#EFF6FF;"><svg width="18" height="18" viewBox="0 0 18 18" fill="#3B82F6"><polygon points="7,4 14,9 7,14"/></svg></div>
+          <div class="stat-label">진행중</div>
+          <div class="stat-num" style="color:#3B82F6;">3</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon" style="background:#ECFDF5;"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M5 9l3 3 5-6" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="stat-label">완료</div>
+          <div class="stat-num" style="color:#10B981;">1</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon" style="background:#F3F4F6;"><svg width="18" height="18" viewBox="0 0 18 18" fill="#6B7280"><rect x="6" y="5" width="2" height="8" rx="1"/><rect x="10" y="5" width="2" height="8" rx="1"/></svg></div>
+          <div class="stat-label">보류</div>
+          <div class="stat-num">1</div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2 class="section-title">내 담당 프로젝트</h2>
+        <button class="btn btn-ghost btn-sm">전체 보기 →</button>
+      </div>
+
+      <div class="project-grid">
+        <div class="project-card" style="border-left-color:#3B82F6;">
+          <div class="pc-header">
+            <div class="pc-name">안전보건교육 콘텐츠</div>
+            <span class="badge badge-progress"><span class="badge-dot"></span>진행중</span>
+          </div>
+          <div class="pc-desc">2025년 정기 안전보건교육 콘텐츠 개발</div>
+          <div class="progress"><div class="progress-fill" style="width:40%;background:#4F46E5;"></div></div>
+          <div class="pc-footer"><span>내 업무: 3/8건 완료</span><span>전체: 12건</span></div>
+        </div>
+        <div class="project-card" style="border-left-color:#F59E0B;">
+          <div class="pc-header">
+            <div class="pc-name">테스트</div>
+            <span class="badge badge-ready"><span class="badge-dot"></span>준비중</span>
+          </div>
+          <div class="pc-desc">테스트 프로젝트</div>
+          <div class="progress"><div class="progress-fill" style="width:0%;"></div></div>
+          <div class="pc-footer"><span>내 업무: 0/1건 완료</span><span>전체: 5건</span></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 프로젝트 목록 -->
+<!-- ============================================================ -->
+<div class="frame" id="projects">
+  <div class="frame-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="frame-url">edu-contents-flow.vercel.app/projects</div></div>
+  <div class="frame-body">
+    <aside class="sidebar">
+      <div class="sidebar-logo"><div class="logo-icon">E</div><div><div class="logo-text">EduContentsFlow</div><div class="logo-sub">안전보건교육본부</div></div></div>
+      <nav class="nav-section">
+        <div class="nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5.5" height="5.5" rx="1.5"/><rect x="10.5" y="2" width="5.5" height="5.5" rx="1.5"/><rect x="2" y="10.5" width="5.5" height="5.5" rx="1.5"/><rect x="10.5" y="10.5" width="5.5" height="5.5" rx="1.5"/></svg>대시보드</div>
+        <div class="nav-item active"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="14" height="12" rx="2"/><path d="M2 7h14"/></svg>프로젝트</div>
+        <div class="nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="2" width="12" height="14" rx="2"/><path d="M7 6h4M7 9h3" stroke-linecap="round"/></svg>템플릿</div>
+        <div class="nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="6" r="3"/><path d="M3 16c0-3 2.5-5.5 6-5.5s6 2.5 6 5.5"/></svg>팀 관리</div>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="new-project-btn">+ 새 프로젝트</button>
+        <div class="user-profile"><div class="user-avatar">관</div><div><div class="user-name">관리자</div><div class="user-role">admin</div></div></div>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="flex justify-between items-center mb-28">
+        <div><h1 class="page-title mb-4">프로젝트</h1><p style="font-size:15px;color:#71717A;">교육 콘텐츠 제작 프로젝트를 관리합니다.</p></div>
+        <button class="btn btn-primary">+ 새 프로젝트</button>
+      </div>
+      <div class="project-grid">
+        <div class="project-card" style="border-left-color:#F59E0B;">
+          <div class="pc-header"><div class="pc-name">테스트</div><span class="badge badge-ready"><span class="badge-dot"></span>준비중</span></div>
+          <div class="pc-desc">테스트 프로젝트</div>
+          <div class="progress"><div class="progress-fill" style="width:0%;"></div></div>
+          <div class="pc-footer"><span>업무: 5개</span><span>완료: 0건</span></div>
+        </div>
+        <div class="project-card" style="border-left-color:#3B82F6;">
+          <div class="pc-header"><div class="pc-name">안전보건교육 콘텐츠</div><span class="badge badge-progress"><span class="badge-dot"></span>진행중</span></div>
+          <div class="pc-desc">2025년 정기 안전보건교육 콘텐츠</div>
+          <div class="progress"><div class="progress-fill" style="width:40%;background:#4F46E5;"></div></div>
+          <div class="pc-footer"><span>업무: 12개</span><span>완료: 4건</span></div>
+        </div>
+        <div class="project-card" style="border-left-color:#10B981;">
+          <div class="pc-header"><div class="pc-name">밀폐공간 VR</div><span class="badge badge-done"><span class="badge-dot"></span>완료</span></div>
+          <div class="pc-desc">밀폐공간 작업 VR 시뮬레이션 콘텐츠</div>
+          <div class="progress"><div class="progress-fill" style="width:100%;background:#10B981;"></div></div>
+          <div class="pc-footer"><span>업무: 6개</span><span>완료: 6건</span></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 프로젝트 상세 - 업무 탭 (핵심 개선) -->
+<!-- ============================================================ -->
+<div class="frame" id="detail">
+  <div class="frame-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="frame-url">edu-contents-flow.vercel.app/projects/test</div></div>
+  <div class="frame-body">
+    <aside class="sidebar">
+      <div class="sidebar-logo"><div class="logo-icon">E</div><div><div class="logo-text">EduContentsFlow</div><div class="logo-sub">안전보건교육본부</div></div></div>
+      <nav class="nav-section">
+        <div class="nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5.5" height="5.5" rx="1.5"/><rect x="10.5" y="2" width="5.5" height="5.5" rx="1.5"/><rect x="2" y="10.5" width="5.5" height="5.5" rx="1.5"/><rect x="10.5" y="10.5" width="5.5" height="5.5" rx="1.5"/></svg>대시보드</div>
+        <div class="nav-item active"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="14" height="12" rx="2"/><path d="M2 7h14"/></svg>프로젝트</div>
+        <div class="nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="2" width="12" height="14" rx="2"/><path d="M7 6h4M7 9h3" stroke-linecap="round"/></svg>템플릿</div>
+        <div class="nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="6" r="3"/><path d="M3 16c0-3 2.5-5.5 6-5.5s6 2.5 6 5.5"/></svg>팀 관리</div>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="new-project-btn">+ 새 프로젝트</button>
+        <div class="user-profile"><div class="user-avatar">관</div><div><div class="user-name">관리자</div><div class="user-role">admin</div></div></div>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="breadcrumb mb-16">
+        <a href="#">프로젝트</a> <span style="margin:0 6px;">›</span> <span class="current">테스트</span>
+      </div>
+      <div class="flex justify-between items-center mb-8">
+        <div class="flex items-center gap-12">
+          <h1 class="page-title" style="margin-bottom:0;">테스트</h1>
+          <span class="badge badge-ready"><span class="badge-dot"></span>준비중</span>
+        </div>
+        <button class="btn btn-secondary btn-sm">✏️ 편집</button>
+      </div>
+      <p style="font-size:14px;color:#71717A;margin-bottom:4px;">테스트 프로젝트</p>
+      <p style="font-size:14px;color:#A1A1AA;margin-bottom:20px;">업무: 0/5 (0%)</p>
+
+      <div class="tabs">
+        <div class="tab active">📋 업무</div>
+        <div class="tab">📅 일정</div>
+        <div class="tab">🔔 알림방</div>
+      </div>
+
+      <div class="flex justify-between items-center mb-16">
+        <div></div>
+        <button class="btn btn-primary btn-sm">+ 업무 추가</button>
+      </div>
+
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:40%;">업무명</th>
+              <th style="width:10%;">상태</th>
+              <th style="width:14%;">담당자</th>
+              <th style="width:12%;">시작일</th>
+              <th style="width:12%;">마감일</th>
+              <th style="width:12%;text-align:right;">진척도</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 상위 업무 1 -->
+            <tr class="task-row">
+              <td>
+                <div class="task-name">
+                  <span class="task-toggle">▾</span>
+                  테스트
+                </div>
+              </td>
+              <td><span class="badge badge-wait badge-sm"><span class="badge-dot"></span>대기</span></td>
+              <td><div class="flex items-center gap-8"><span class="avatar" style="background:#4F46E5;">조</span>조규영</div></td>
+              <td>2026-04-01</td>
+              <td>2026-04-15</td>
+              <td><div class="progress-cell"><div class="progress progress-mini"><div class="progress-fill" style="width:0%;background:#4F46E5;"></div></div><span class="progress-text">0%</span></div></td>
+              <td class="row-actions">
+                <button class="action-btn" title="하위 업무 추가">+</button>
+                <button class="action-btn" title="편집">✎</button>
+                <button class="action-btn danger" title="삭제">✕</button>
+              </td>
+            </tr>
+            <!-- 하위 업무 추가 버튼 (깔끔한 인라인) -->
+            <tr class="add-subtask-row">
+              <td colspan="6">
+                <button class="add-subtask-btn">+ 하위 업무 추가</button>
+              </td>
+            </tr>
+            <!-- 하위 업무 -->
+            <tr class="task-row">
+              <td><div class="subtask-name">하위 테스트</div></td>
+              <td><span class="badge badge-wait"><span class="badge-dot"></span>대기</span></td>
+              <td class="empty-date">—</td>
+              <td class="empty-date">—</td>
+              <td class="empty-date">—</td>
+              <td><div class="progress-cell"><div class="progress progress-mini"><div class="progress-fill" style="width:0%;"></div></div><span class="progress-text">0%</span></div></td>
+              <td class="row-actions">
+                <button class="action-btn" title="편집">✎</button>
+                <button class="action-btn danger" title="삭제">✕</button>
+              </td>
+            </tr>
+            
+            <!-- 상위 업무 2 -->
+            <tr class="task-row">
+              <td>
+                <div class="task-name">
+                  <span class="task-toggle">▾</span>
+                  테스트2
+                </div>
+              </td>
+              <td><span class="badge badge-wait"><span class="badge-dot"></span>대기</span></td>
+              <td><div class="flex items-center gap-8"><span class="avatar" style="background:#7C3AED;">관</span>관리자</div></td>
+              <td class="empty-date">—</td>
+              <td class="empty-date">—</td>
+              <td><div class="progress-cell"><div class="progress progress-mini"><div class="progress-fill" style="width:0%;"></div></div><span class="progress-text">0%</span></div></td>
+              <td class="row-actions">
+                <button class="action-btn" title="하위 업무 추가">+</button>
+                <button class="action-btn" title="편집">✎</button>
+                <button class="action-btn danger" title="삭제">✕</button>
+              </td>
+            </tr>
+            <tr class="add-subtask-row">
+              <td colspan="6">
+                <button class="add-subtask-btn">+ 하위 업무 추가</button>
+              </td>
+            </tr>
+            <tr class="task-row">
+              <td><div class="subtask-name">하위 테스트2</div></td>
+              <td><span class="badge badge-wait"><span class="badge-dot"></span>대기</span></td>
+              <td><div class="flex items-center gap-8"><span class="avatar" style="background:#4F46E5;">조</span>조규영</div></td>
+              <td class="empty-date">—</td>
+              <td class="empty-date">—</td>
+              <td><div class="progress-cell"><div class="progress progress-mini"><div class="progress-fill" style="width:0%;"></div></div><span class="progress-text">0%</span></div></td>
+              <td class="row-actions">
+                <button class="action-btn" title="편집">✎</button>
+                <button class="action-btn danger" title="삭제">✕</button>
+              </td>
+            </tr>
+
+            <!-- 상위 업무 3 (하위 없음) -->
+            <tr class="task-row">
+              <td>
+                <div class="task-name" style="padding-left:28px;">
+                  테스트3
+                </div>
+              </td>
+              <td><span class="badge badge-wait"><span class="badge-dot"></span>대기</span></td>
+              <td class="empty-date">—</td>
+              <td class="empty-date">—</td>
+              <td class="empty-date">—</td>
+              <td><div class="progress-cell"><div class="progress progress-mini"><div class="progress-fill" style="width:0%;"></div></div><span class="progress-text">0%</span></div></td>
+              <td class="row-actions">
+                <button class="action-btn" title="하위 업무 추가">+</button>
+                <button class="action-btn" title="편집">✎</button>
+                <button class="action-btn danger" title="삭제">✕</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 프로젝트 상세 - 일정(간트) 탭 -->
+<!-- ============================================================ -->
+<div class="frame" id="gantt">
+  <div class="frame-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="frame-url">edu-contents-flow.vercel.app/projects/test (일정)</div></div>
+  <div class="frame-body">
+    <aside class="sidebar">
+      <div class="sidebar-logo"><div class="logo-icon">E</div><div><div class="logo-text">EduContentsFlow</div><div class="logo-sub">안전보건교육본부</div></div></div>
+      <nav class="nav-section">
+        <div class="nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5.5" height="5.5" rx="1.5"/><rect x="10.5" y="2" width="5.5" height="5.5" rx="1.5"/><rect x="2" y="10.5" width="5.5" height="5.5" rx="1.5"/><rect x="10.5" y="10.5" width="5.5" height="5.5" rx="1.5"/></svg>대시보드</div>
+        <div class="nav-item active"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="14" height="12" rx="2"/><path d="M2 7h14"/></svg>프로젝트</div>
+        <div class="nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="2" width="12" height="14" rx="2"/><path d="M7 6h4M7 9h3" stroke-linecap="round"/></svg>템플릿</div>
+        <div class="nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="6" r="3"/><path d="M3 16c0-3 2.5-5.5 6-5.5s6 2.5 6 5.5"/></svg>팀 관리</div>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="new-project-btn">+ 새 프로젝트</button>
+        <div class="user-profile"><div class="user-avatar">관</div><div><div class="user-name">관리자</div><div class="user-role">admin</div></div></div>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="breadcrumb mb-16"><a href="#">프로젝트</a> <span style="margin:0 6px;">›</span> <span class="current">테스트</span></div>
+      <div class="flex justify-between items-center mb-8">
+        <div class="flex items-center gap-12">
+          <h1 class="page-title" style="margin-bottom:0;">테스트</h1>
+          <span class="badge badge-ready"><span class="badge-dot"></span>준비중</span>
+        </div>
+        <button class="btn btn-secondary btn-sm">✏️ 편집</button>
+      </div>
+      <p style="font-size:14px;color:#A1A1AA;margin-bottom:20px;">업무: 0/5 (0%)</p>
+
+      <div class="tabs">
+        <div class="tab">📋 업무</div>
+        <div class="tab active">📅 일정</div>
+        <div class="tab">🔔 알림방</div>
+      </div>
+
+      <div class="gantt-header">
+        <button class="gantt-nav">‹</button>
+        <button class="gantt-today-btn">오늘</button>
+        <button class="gantt-nav">›</button>
+        <span class="gantt-range">2026.03.29 ~ 2026.05.09</span>
+      </div>
+
+      <div class="gantt-table">
+        <table class="gantt-grid">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding-left:16px;min-width:200px;">업무</th>
+              <th colspan="3" style="border-bottom:1px solid #E4E4E7;">2026년 3월</th>
+              <th colspan="30" style="border-bottom:1px solid #E4E4E7;">2026년 4월</th>
+            </tr>
+            <tr>
+              <th style="text-align:left;padding-left:16px;"></th>
+              <th>29<br><span style="font-size:10px;">S</span></th>
+              <th>30<br><span style="font-size:10px;">M</span></th>
+              <th class="today" style="background:#EEF2FF;">31<br><span style="font-size:10px;">T</span></th>
+              <th>1<br><span style="font-size:10px;">W</span></th>
+              <th>2<br><span style="font-size:10px;">T</span></th>
+              <th>3<br><span style="font-size:10px;">F</span></th>
+              <th>4<br><span style="font-size:10px;">S</span></th>
+              <th>5<br><span style="font-size:10px;">S</span></th>
+              <th>6<br><span style="font-size:10px;">M</span></th>
+              <th>7<br><span style="font-size:10px;">T</span></th>
+              <th>8<br><span style="font-size:10px;">W</span></th>
+              <th>9<br><span style="font-size:10px;">T</span></th>
+              <th>10<br><span style="font-size:10px;">F</span></th>
+              <th>11<br><span style="font-size:10px;">S</span></th>
+              <th>12<br><span style="font-size:10px;">S</span></th>
+              <th>13<br><span style="font-size:10px;">M</span></th>
+              <th>14<br><span style="font-size:10px;">T</span></th>
+              <th>15<br><span style="font-size:10px;">W</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="task-col" style="font-weight:500;">▾ 테스트</td>
+              <td></td><td></td><td style="position:relative;"><div class="today-line"></div></td>
+              <td colspan="15" style="position:relative;"><div class="gantt-bar gantt-bar-progress" style="left:0;right:0;"></div></td>
+            </tr>
+            <tr>
+              <td class="task-col" style="padding-left:36px;color:#71717A;">하위 테스트</td>
+              <td></td><td></td><td style="position:relative;"><div class="today-line"></div></td>
+              <td colspan="15"></td>
+            </tr>
+            <tr>
+              <td class="task-col" style="font-weight:500;">▾ 테스트2</td>
+              <td></td><td></td><td style="position:relative;"><div class="today-line"></div></td>
+              <td colspan="15"></td>
+            </tr>
+            <tr>
+              <td class="task-col" style="padding-left:36px;color:#71717A;">하위 테스트2</td>
+              <td></td><td></td><td style="position:relative;"><div class="today-line"></div></td>
+              <td colspan="15"></td>
+            </tr>
+            <tr>
+              <td class="task-col" style="font-weight:500;">테스트3</td>
+              <td></td><td></td><td style="position:relative;"><div class="today-line"></div></td>
+              <td colspan="15"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 템플릿 생성 -->
+<!-- ============================================================ -->
+<div class="frame" id="template">
+  <div class="frame-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="frame-url">edu-contents-flow.vercel.app/templates/new</div></div>
+  <div class="frame-body">
+    <aside class="sidebar">
+      <div class="sidebar-logo"><div class="logo-icon">E</div><div><div class="logo-text">EduContentsFlow</div><div class="logo-sub">안전보건교육본부</div></div></div>
+      <nav class="nav-section">
+        <div class="nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5.5" height="5.5" rx="1.5"/><rect x="10.5" y="2" width="5.5" height="5.5" rx="1.5"/><rect x="2" y="10.5" width="5.5" height="5.5" rx="1.5"/><rect x="10.5" y="10.5" width="5.5" height="5.5" rx="1.5"/></svg>대시보드</div>
+        <div class="nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="14" height="12" rx="2"/><path d="M2 7h14"/></svg>프로젝트</div>
+        <div class="nav-item active"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="2" width="12" height="14" rx="2"/><path d="M7 6h4M7 9h3" stroke-linecap="round"/></svg>템플릿</div>
+        <div class="nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="6" r="3"/><path d="M3 16c0-3 2.5-5.5 6-5.5s6 2.5 6 5.5"/></svg>팀 관리</div>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="new-project-btn">+ 새 프로젝트</button>
+        <div class="user-profile"><div class="user-avatar">관</div><div><div class="user-name">관리자</div><div class="user-role">admin</div></div></div>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="breadcrumb mb-16"><a href="#">템플릿</a> <span style="margin:0 6px;">›</span> <span class="current">새 템플릿</span></div>
+      <h1 class="page-title mb-28">새 템플릿</h1>
+
+      <div class="form-card">
+        <div class="form-group">
+          <label class="form-label">템플릿 이름</label>
+          <input class="form-input" type="text" placeholder="예: 안전보건교육 콘텐츠">
+        </div>
+        <div class="form-group">
+          <label class="form-label">설명 <span class="form-optional">(선택)</span></label>
+          <textarea class="form-input form-textarea" placeholder="이 템플릿에 대한 간단한 설명"></textarea>
+        </div>
+        <div class="form-group">
+          <div class="flex justify-between items-center mb-8">
+            <label class="form-label" style="margin-bottom:0;">업무 구조</label>
+            <button class="btn btn-ghost btn-sm" style="color:#4F46E5;">+ 업무 추가</button>
+          </div>
+          <div class="table-container">
+            <table class="table">
+              <thead><tr><th>업무명</th></tr></thead>
+              <tbody>
+                <tr><td><input class="form-input" style="border:none;padding:6px 0;box-shadow:none;border-radius:0;" type="text" placeholder="업무 이름을 입력하세요"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="form-hint">하위 업무는 › 아이콘을 클릭하여 추가할 수 있습니다.</p>
+        </div>
+        <div class="flex gap-8">
+          <button class="btn btn-primary">생성</button>
+          <button class="btn btn-secondary">취소</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.page-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.frame').forEach(f => f.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.page).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

@@ -169,7 +169,11 @@ export function TeamList({ members, currentUserId }: TeamListProps) {
                   </Button>
                 </div>
               </div>
-              {error && <p className="text-sm text-destructive">{error}</p>}
+              {error && (
+                <div className="rounded-lg bg-destructive/10 px-3 py-2 text-destructive">
+                  {error}
+                </div>
+              )}
               <Button type="submit" className="w-full" disabled={saving}>
                 {saving ? "추가 중..." : "팀원 추가"}
               </Button>
@@ -284,7 +288,9 @@ export function TeamList({ members, currentUserId }: TeamListProps) {
       </div>
 
       {error && !dialogOpen && (
-        <p className="text-sm text-destructive">{error}</p>
+        <div className="rounded-lg bg-destructive/10 px-3 py-2 text-destructive">
+          {error}
+        </div>
       )}
     </div>
   );

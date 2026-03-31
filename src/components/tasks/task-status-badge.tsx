@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
-import { TASK_STATUS_LABELS, TASK_STATUS_COLORS, type TaskStatusKey } from "@/lib/constants";
+import { TASK_STATUS_LABELS, TASK_STATUS_COLORS, TASK_STATUS_DOT_COLORS, type TaskStatusKey } from "@/lib/constants";
 
 const STATUS_OPTIONS: TaskStatusKey[] = ["WAITING", "IN_PROGRESS", "FEEDBACK", "COMPLETE"];
 
@@ -59,10 +59,11 @@ export function TaskStatusBadge({ status, onChange }: TaskStatusBadgeProps) {
           setOpen(!open);
         }}
         className={cn(
-          "rounded-full px-2.5 py-0.5 text-sm font-medium whitespace-nowrap cursor-pointer transition-colors",
+          "inline-flex items-center gap-[5px] rounded-full px-[10px] py-[3px] text-[12px] font-medium whitespace-nowrap cursor-pointer transition-all duration-150",
           TASK_STATUS_COLORS[status],
         )}
       >
+        <span className={cn("size-[6px] rounded-full", TASK_STATUS_DOT_COLORS[status])} />
         {TASK_STATUS_LABELS[status]}
       </button>
 
@@ -86,18 +87,12 @@ export function TaskStatusBadge({ status, onChange }: TaskStatusBadgeProps) {
                 setOpen(false);
               }}
               className={cn(
-                "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent",
+                "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-[13px] hover:bg-accent transition-colors duration-150",
                 status === s && "bg-accent",
               )}
             >
-              <span
-                className={cn(
-                  "inline-block rounded-full px-2 py-0.5 font-medium",
-                  TASK_STATUS_COLORS[s],
-                )}
-              >
-                {TASK_STATUS_LABELS[s]}
-              </span>
+              <span className={cn("size-1.5 rounded-full", TASK_STATUS_DOT_COLORS[s])} />
+              <span className="font-medium">{TASK_STATUS_LABELS[s]}</span>
             </button>
           ))}
         </div>,

@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import {
   PROJECT_STATUS_LABELS,
   PROJECT_STATUS_COLORS,
+  STATUS_DOT_COLORS,
 } from "@/lib/constants";
 import type { ProjectStatus } from "@/generated/prisma/client";
 
@@ -36,7 +37,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
   return (
     <Link href={`/projects/${project.id}`} prefetch={false}>
       <Card className={cn(
-        "border-l-[3px] transition-all hover:shadow-md hover:border-l-[3px]",
+        "border-l-[3px] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-px transition-all duration-150",
         STATUS_BORDER_COLORS[project.status],
       )}>
         <CardHeader className="pb-2">
@@ -44,10 +45,11 @@ export function ProjectCard({ project }: ProjectCardProps) {
             <CardTitle className="text-base">{project.name}</CardTitle>
             <span
               className={cn(
-                "shrink-0 rounded-full px-2 py-0.5 text-sm font-medium",
+                "inline-flex items-center gap-1.5 shrink-0 rounded-full px-2.5 py-[3px] text-[13px] font-medium",
                 PROJECT_STATUS_COLORS[project.status],
               )}
             >
+              <span className={cn("size-1.5 rounded-full", STATUS_DOT_COLORS[project.status])} />
               {PROJECT_STATUS_LABELS[project.status]}
             </span>
           </div>

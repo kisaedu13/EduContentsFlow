@@ -79,12 +79,12 @@ export function TaskAssigneeCell({
             <div className={`size-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${getAvatarColor(assigneeName)}`}>
               {assigneeName.slice(0, 1)}
             </div>
-            <span className="text-sm truncate max-w-[70px]">{assigneeName}</span>
+            <span className="truncate max-w-[70px]">{assigneeName}</span>
           </>
         ) : (
           <>
             <div className="size-7 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400 text-xs shrink-0">—</div>
-            <span className="text-sm text-muted-foreground">-</span>
+            <span className="text-muted-foreground">-</span>
           </>
         )}
       </button>
