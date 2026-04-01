@@ -18,14 +18,16 @@
 
 ## 디자인 시스템
 - **레퍼런스**: `docs/DESIGN_INSTRUCTIONS.md`, `docs/design-mockup-v2.html`
-- **배경**: 페이지 `#F7F7F8`, 카드/테이블 `#FFFFFF`
-- **Primary**: `#4F46E5` (indigo), hover `#4338CA`
-- **사이드바**: `#18181B` (다크), 네비 `#A1A1AA`, active `#27272A` + 흰색
+- **배경**: 페이지 `#F7F7F8`, 카드/테이블 `#FFFFFF` (다크: `#09090B` / `#18181B`)
+- **Primary**: `#4F46E5` (indigo), 다크모드 `#818CF8`
+- **사이드바**: `#18181B` (다크), 아이콘 20px, 텍스트 16px, 메뉴 높이 40px
 - **카드**: border 없이 `shadow-card` 사용, hover 시 `shadow-card-hover`
-- **테이블**: border + rounded-[10px] 컨테이너, 헤더 `#FAFAFA`, 행 hover `#FAFAFE`
-- **상태 뱃지**: pill + 6px dot (준비중=amber, 진행중=blue, 완료=emerald, 보류=gray, 대기=zinc)
-- **타이포**: 제목 22-24px/700, 본문 14-15px, 캡션 12-13px
+- **테이블**: border + rounded-[10px], 헤더 `bg-muted`, 최상단 업무 볼드+배경색
+- **상태 색상**: CSS 변수 기반 (`--status-ready-*`, `--status-progress-*` 등) — 다크모드 자동 대응
+- **상태 뱃지**: pill + 6px dot (준비중=amber, 진행중=blue, 완료=emerald, 보류=gray, 대기=zinc, 피드백=purple)
+- **타이포**: 페이지 제목 22px/700, 섹션 17-18px/600, 본문 15px, 캡션 13-14px, 브레드크럼 16px
 - **전역**: 모든 인터랙티브 요소에 `transition-all duration-150`
+- **다크모드**: 모든 색상은 CSS 변수(`globals.css`)로 관리, 하드코딩 hex 금지
 
 ## 핵심 데이터 모델
 - **Task** (계층형 업무): projectId, parentId(자기참조), name, status(WAITING/IN_PROGRESS/FEEDBACK/COMPLETE), assigneeId, startDate, endDate, progress(0~100), depth, sortOrder
