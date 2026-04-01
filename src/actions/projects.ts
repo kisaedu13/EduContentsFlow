@@ -13,6 +13,7 @@ const CreateProjectSchema = z.object({
   name: z.string().min(1, "프로젝트 이름을 입력하세요"),
   description: z.string().optional(),
   templateId: z.string().optional(),
+  status: z.enum(["PREPARING", "IN_PROGRESS", "COMPLETED", "ON_HOLD"]).optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
 });
@@ -36,7 +37,7 @@ export async function createProject(
     const parsed = CreateProjectSchema.safeParse(input);
     if (!parsed.success) return { error: parsed.error.issues[0].message };
 
-    const { name, description, templateId, startDate, endDate } = parsed.data;
+    const { name, description, templateId, status, startDate, endDate } = parsed.data;
 
     const project = await prisma.$transaction(async (tx) => {
       const proj = await tx.project.create({
@@ -44,6 +45,7 @@ export async function createProject(
           name,
           description: description || null,
           templateId: templateId || null,
+          status: status ?? "PREPARING",
           startDate: startDate ? new Date(startDate) : null,
           endDate: endDate ? new Date(endDate) : null,
         },

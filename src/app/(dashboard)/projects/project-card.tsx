@@ -1,25 +1,7 @@
 import Link from "next/link";
 import { format } from "date-fns";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import {
-  PROJECT_STATUS_LABELS,
-  PROJECT_STATUS_COLORS,
-  STATUS_DOT_COLORS,
-} from "@/lib/constants";
+import { CalendarDays, ListChecks } from "lucide-react";
 import type { ProjectStatus } from "@/generated/prisma/client";
-
-const STATUS_BORDER_COLORS: Record<ProjectStatus, string> = {
-  PREPARING: "border-l-amber-400",
-  IN_PROGRESS: "border-l-sky-400",
-  COMPLETED: "border-l-emerald-400",
-  ON_HOLD: "border-l-gray-300 dark:border-l-gray-600",
-};
 
 interface ProjectCardProps {
   project: {
@@ -33,44 +15,31 @@ interface ProjectCardProps {
   };
 }
 
-export function ProjectCard({ project }: ProjectCardProps) {
+export function ProjectBoardCard({ project }: ProjectCardProps) {
   return (
     <Link href={`/projects/${project.id}`} prefetch={false}>
-      <Card className={cn(
-        "border-l-[3px] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-px transition-all duration-150",
-        STATUS_BORDER_COLORS[project.status],
-      )}>
-        <CardHeader className="pb-2">
-          <div className="flex items-start justify-between gap-2">
-            <CardTitle className="text-base">{project.name}</CardTitle>
-            <span
-              className={cn(
-                "inline-flex items-center gap-1.5 shrink-0 rounded-full px-2.5 py-[3px] text-[13px] font-medium",
-                PROJECT_STATUS_COLORS[project.status],
-              )}
-            >
-              <span className={cn("size-1.5 rounded-full", STATUS_DOT_COLORS[project.status])} />
-              {PROJECT_STATUS_LABELS[project.status]}
+      <div className="rounded-lg bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-150 border border-[#F0F0F0]">
+        <h3 className="text-[14px] font-semibold text-foreground leading-snug">
+          {project.name}
+        </h3>
+        {project.description && (
+          <p className="mt-2 text-[13px] text-muted-foreground leading-relaxed line-clamp-2">
+            {project.description}
+          </p>
+        )}
+        <div className="mt-3 flex items-center gap-3 text-[12px] text-muted-foreground">
+          {project.startDate && (
+            <span className="inline-flex items-center gap-1">
+              <CalendarDays className="size-3.5 text-[#A1A1AA]" />
+              {format(project.startDate, "yyyy.MM.dd")}
             </span>
-          </div>
-          {project.description && (
-            <p className="text-sm text-muted-foreground line-clamp-1">
-              {project.description}
-            </p>
           )}
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-            <span>업무: {project._count.tasks}개</span>
-            {project.startDate && (
-              <span>
-                {format(project.startDate, "yyyy.MM.dd")}
-                {project.endDate && ` ~ ${format(project.endDate, "yyyy.MM.dd")}`}
-              </span>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+          <span className="inline-flex items-center gap-1">
+            <ListChecks className="size-3.5 text-[#A1A1AA]" />
+            업무 {project._count.tasks}개
+          </span>
+        </div>
+      </div>
     </Link>
   );
 }

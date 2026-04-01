@@ -58,6 +58,7 @@ export function ProjectForm({ templates, projectId, initialData }: ProjectFormPr
           name,
           description: description || undefined,
           templateId: templateId || undefined,
+          status,
           startDate: startDate || undefined,
           endDate: endDate || undefined,
         });
@@ -122,23 +123,21 @@ export function ProjectForm({ templates, projectId, initialData }: ProjectFormPr
           </div>
         )}
 
-        {isEdit && (
-          <div className="space-y-2">
-            <Label htmlFor="status">상태</Label>
-            <select
-              id="status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value as ProjectStatus)}
-              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-            >
-              {Object.entries(PROJECT_STATUS_LABELS).map(([key, label]) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+        <div className="space-y-2">
+          <Label htmlFor="status">상태</Label>
+          <select
+            id="status"
+            value={status}
+            onChange={(e) => setStatus(e.target.value as ProjectStatus)}
+            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          >
+            {Object.entries(PROJECT_STATUS_LABELS).map(([key, label]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {isEdit && (
           <div className="grid grid-cols-2 gap-4">
