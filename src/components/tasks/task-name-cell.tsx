@@ -74,7 +74,7 @@ export function TaskNameCell({
         />
       ) : (
         <span
-          className="truncate cursor-pointer hover:text-foreground/80 py-0.5 px-1.5 rounded hover:bg-[#F4F4F5]"
+          className="truncate cursor-pointer hover:text-foreground/80 py-0.5 px-1.5 rounded hover:bg-muted"
           onClick={() => setEditing(true)}
         >
           {name}

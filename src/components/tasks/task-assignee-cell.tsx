@@ -16,12 +16,12 @@ interface TaskAssigneeCellProps {
 }
 
 const AVATAR_COLORS = [
-  "bg-violet-100 text-violet-700",
-  "bg-amber-100 text-amber-700",
-  "bg-cyan-100 text-cyan-700",
-  "bg-rose-100 text-rose-700",
-  "bg-emerald-100 text-emerald-700",
-  "bg-sky-100 text-sky-700",
+  "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300",
+  "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
+  "bg-cyan-100 text-cyan-700 dark:bg-cyan-500/15 dark:text-cyan-300",
+  "bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300",
+  "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
+  "bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300",
 ];
 
 function getAvatarColor(name: string) {
@@ -83,7 +83,7 @@ export function TaskAssigneeCell({
           </>
         ) : (
           <>
-            <div className="size-7 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400 text-xs shrink-0">—</div>
+            <div className="size-7 rounded-full bg-muted flex items-center justify-center text-gray-400 text-xs shrink-0">—</div>
             <span className="text-muted-foreground">-</span>
           </>
         )}
@@ -100,7 +100,7 @@ export function TaskAssigneeCell({
             onClick={() => { onChange(null); setOpen(false); }}
             className={`w-full flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent ${!assigneeId ? "bg-accent" : ""}`}
           >
-            <div className="size-7 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400 text-xs">—</div>
+            <div className="size-7 rounded-full bg-muted flex items-center justify-center text-gray-400 text-xs">—</div>
             <span className="text-muted-foreground">미배정</span>
           </button>
           {profiles.map((p) => (

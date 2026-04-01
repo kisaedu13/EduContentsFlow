@@ -1,16 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Trash2 } from "lucide-react";
+import { Trash2, Layers } from "lucide-react";
 import { useState } from "react";
 import { deleteTemplate } from "@/actions/templates";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -51,17 +44,20 @@ export function TemplateCard({ template }: TemplateCardProps) {
   }
 
   return (
-    <Card className="group relative">
-      <Link href={`/templates/${template.id}`} className="absolute inset-0 z-0" />
-      <CardHeader className="relative z-10 pb-2">
-        <div className="flex items-start justify-between">
-          <div>
-            <CardTitle className="text-base">{template.name}</CardTitle>
-            {template.description && (
-              <CardDescription className="mt-1">
-                {template.description}
-              </CardDescription>
-            )}
+    <div className="group relative rounded-[10px] bg-card shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-0.5 transition-all duration-150 cursor-pointer">
+      <Link href={`/templates/${template.id}`} className="absolute inset-0 z-10 rounded-[10px]" />
+      <div className="relative p-5">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-accent">
+              <Layers className="size-4 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-[15px] font-semibold text-foreground">{template.name}</h3>
+              {template.description && (
+                <p className="text-[13px] text-muted-foreground mt-0.5 line-clamp-1">{template.description}</p>
+              )}
+            </div>
           </div>
           <AlertDialog>
             <AlertDialogTrigger
@@ -69,7 +65,7 @@ export function TemplateCard({ template }: TemplateCardProps) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="size-8 opacity-0 group-hover:opacity-100"
+                  className="relative z-20 size-8 opacity-0 group-hover:opacity-100"
                   onClick={(e) => e.stopPropagation()}
                 />
               }
@@ -93,28 +89,28 @@ export function TemplateCard({ template }: TemplateCardProps) {
             </AlertDialogContent>
           </AlertDialog>
         </div>
-      </CardHeader>
-      <CardContent className="relative z-10">
-        <div className="text-xs text-muted-foreground">
-          {template._count.templateTasks > 0 ? (
-            <>
-              <span className="font-medium text-foreground">
-                {template.templateTasks.map((t) => t.name).join(", ")}
-              </span>
-              {template._count.templateTasks > template.templateTasks.length && (
-                <span> 외 {template._count.templateTasks - template.templateTasks.length}개</span>
-              )}
-            </>
-          ) : (
-            <span>업무 없음</span>
+        <div className="border-t border-border pt-3 flex items-center justify-between">
+          <div className="text-[13px] text-muted-foreground">
+            {template._count.templateTasks > 0 ? (
+              <>
+                <span className="font-medium text-foreground">
+                  {template.templateTasks.map((t) => t.name).join(", ")}
+                </span>
+                {template._count.templateTasks > template.templateTasks.length && (
+                  <span> 외 {template._count.templateTasks - template.templateTasks.length}개</span>
+                )}
+              </>
+            ) : (
+              <span>업무 없음</span>
+            )}
+          </div>
+          {template._count.projects > 0 && (
+            <span className="text-[12px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+              {template._count.projects}개 프로젝트
+            </span>
           )}
         </div>
-        {template._count.projects > 0 && (
-          <p className="mt-2 text-xs text-muted-foreground">
-            {template._count.projects}개 프로젝트에서 사용 중
-          </p>
-        )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

@@ -47,14 +47,14 @@ export function AppSidebar({ user }: AppSidebarProps) {
 
   return (
     <Sidebar>
-      <SidebarHeader className="border-b border-[#27272A] px-4 py-5">
+      <SidebarHeader className="border-b border-sidebar-border px-4 py-5">
         <Link href="/dashboard" className="flex items-center gap-2.5">
-          <div className="flex size-[30px] items-center justify-center rounded-lg bg-[#4F46E5] text-white text-[13px] font-bold">
+          <div className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground text-[15px] font-bold">
             E
           </div>
           <div className="flex flex-col">
-            <span className="text-[14px] font-semibold text-white">EduContentsFlow</span>
-            <span className="text-[11px] text-[#71717A]">안전보건교육본부</span>
+            <span className="text-[16px] font-semibold text-sidebar-primary">EduContentsFlow</span>
+            <span className="text-[13px] text-sidebar-foreground">안전보건교육본부</span>
           </div>
         </Link>
       </SidebarHeader>
@@ -69,8 +69,8 @@ export function AppSidebar({ user }: AppSidebarProps) {
                     isActive={pathname.startsWith(item.href)}
                     className="transition-all duration-150"
                   >
-                    <item.icon className="size-[18px]" />
-                    <span className="text-[14px]">{item.title}</span>
+                    <item.icon />
+                    <span>{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -78,11 +78,11 @@ export function AppSidebar({ user }: AppSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t border-[#27272A] space-y-3 p-3">
+      <SidebarFooter className="border-t border-sidebar-border space-y-3 p-3">
         {isAdmin && (
           <Link
             href="/projects/new"
-            className="flex items-center justify-center gap-1.5 w-full bg-[#4F46E5] hover:bg-[#4338CA] text-white rounded-lg py-2.5 text-[14px] font-medium transition-all duration-150"
+            className="flex items-center justify-center gap-2 w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg py-3 text-[16px] font-medium transition-all duration-150"
           >
             <Plus className="size-4" />
             새 프로젝트

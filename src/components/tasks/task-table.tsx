@@ -241,23 +241,23 @@ export function TaskTable({ projectId, tasks: serverTasks, profiles }: TaskTable
             />
           </div>
         ) : (
-          <Button variant="outline" size="sm" onClick={() => setAddingRoot(true)}>
+          <Button size="sm" onClick={() => setAddingRoot(true)}>
             <Plus className="size-4" />
             업무 추가
           </Button>
         )}
       </div>
 
-      <div className="border border-[#E4E4E7] rounded-[10px] overflow-hidden bg-white">
+      <div className="border border-border rounded-[10px] overflow-hidden bg-card">
         <table className="w-full">
           <thead>
-            <tr className="bg-[#FAFAFA] sticky top-0 z-10">
-              <th className="text-left p-[10px_16px] text-[13px] font-medium text-[#71717A]">업무명</th>
-              <th className="text-left p-[10px_16px] text-[13px] font-medium text-[#71717A] w-[100px]">상태</th>
-              <th className="text-left p-[10px_16px] text-[13px] font-medium text-[#71717A] w-[100px]">담당자</th>
-              <th className="text-left p-[10px_16px] text-[13px] font-medium text-[#71717A] w-[120px]">시작일</th>
-              <th className="text-left p-[10px_16px] text-[13px] font-medium text-[#71717A] w-[120px]">마감일</th>
-              <th className="text-left p-[10px_16px] text-[13px] font-medium text-[#71717A] w-[100px]">진척도</th>
+            <tr className="bg-muted sticky top-0 z-10">
+              <th className="text-left p-[10px_16px] text-[14px] font-medium text-muted-foreground">업무명</th>
+              <th className="text-left p-[10px_16px] text-[14px] font-medium text-muted-foreground w-[100px]">상태</th>
+              <th className="text-left p-[10px_16px] text-[14px] font-medium text-muted-foreground w-[100px]">담당자</th>
+              <th className="text-left p-[10px_16px] text-[14px] font-medium text-muted-foreground w-[120px]">시작일</th>
+              <th className="text-left p-[10px_16px] text-[14px] font-medium text-muted-foreground w-[120px]">마감일</th>
+              <th className="text-left p-[10px_16px] text-[14px] font-medium text-muted-foreground w-[100px]">진척도</th>
             </tr>
           </thead>
           <tbody>
@@ -331,14 +331,14 @@ function TaskRowWithChild({
         onAddSibling={onAddSibling}
       />
       {addingChildFor === task.id && (
-        <tr className="border-b border-[#F4F4F5]">
+        <tr className="border-b border-border/50">
           <td colSpan={6} className="p-[8px_16px]">
             <div style={{ paddingLeft: (task.depth + 1) * 24 + 24 }}>
               <input
                 autoFocus
                 type="text"
                 placeholder="하위 업무명 입력 후 Enter..."
-                className="w-full max-w-[300px] px-2 py-1 rounded border border-[#E4E4E7] text-[14px] outline-none focus:border-[#4F46E5] focus:ring-[3px] focus:ring-[#4F46E5]/10 transition-all"
+                className="w-full max-w-[300px] px-2 py-1 rounded border border-border bg-transparent text-[14px] outline-none focus:border-primary focus:ring-[3px] focus:ring-primary/10 transition-all"
                 onBlur={(e) => {
                   onAddChildSubmit(task.id, e.target.value.trim());
                 }}

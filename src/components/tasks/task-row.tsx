@@ -48,14 +48,16 @@ export function TaskRow({
 }: TaskRowProps) {
   const [showActions, setShowActions] = useState(false);
 
+  const isTopLevel = task.depth === 0;
+
   return (
     <tr
-      className="group hover:bg-[#FAFAFE] transition-colors duration-150"
+      className={`group hover:bg-muted/30 transition-colors duration-150 ${isTopLevel ? "bg-muted/20" : ""}`}
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
     >
       {/* 업무명 + 액션 버튼 */}
-      <td className="p-[12px_16px] border-b border-[#F4F4F5] text-[14px] min-w-[300px]">
+      <td className={`p-[12px_16px] border-b border-border/50 text-[14px] min-w-[300px] ${isTopLevel ? "font-semibold" : ""}`}>
         <div className="flex items-center" style={{ paddingLeft: task.depth * 24 }}>
           {/* 이름 셀 */}
           <TaskNameCell
@@ -73,7 +75,7 @@ export function TaskRow({
               type="button"
               title="하위 업무 추가"
               onClick={() => onAddChild(task.id, "")}
-              className="size-6 rounded flex items-center justify-center text-[#A1A1AA] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-all duration-150"
+              className="size-6 rounded flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-150"
             >
               <CornerDownRight className="size-[14px]" />
             </button>
@@ -81,7 +83,7 @@ export function TaskRow({
               type="button"
               title="같은 레벨 추가"
               onClick={() => onAddSibling(task.id, "")}
-              className="size-6 rounded flex items-center justify-center text-[#A1A1AA] hover:bg-[#F4F4F5] hover:text-[#18181B] transition-all duration-150"
+              className="size-6 rounded flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-150"
             >
               <Plus className="size-[14px]" />
             </button>
@@ -89,7 +91,7 @@ export function TaskRow({
               type="button"
               title="삭제"
               onClick={() => onDelete(task.id)}
-              className="size-6 rounded flex items-center justify-center text-[#A1A1AA] hover:bg-red-50 hover:text-red-600 transition-all duration-150"
+              className="size-6 rounded flex items-center justify-center text-muted-foreground hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 transition-all duration-150"
             >
               <Trash2 className="size-[14px]" />
             </button>
@@ -98,7 +100,7 @@ export function TaskRow({
       </td>
 
       {/* 상태 */}
-      <td className="p-[12px_16px] border-b border-[#F4F4F5] text-[14px] w-[100px]">
+      <td className="p-[12px_16px] border-b border-border/50 text-[14px] w-[100px]">
         <TaskStatusBadge
           status={task.status}
           onChange={(status) => onUpdate(task.id, { status })}
@@ -106,7 +108,7 @@ export function TaskRow({
       </td>
 
       {/* 담당자 */}
-      <td className="p-[12px_16px] border-b border-[#F4F4F5] text-[14px] w-[100px]">
+      <td className="p-[12px_16px] border-b border-border/50 text-[14px] w-[100px]">
         <TaskAssigneeCell
           assigneeId={task.assigneeId}
           assigneeName={task.assigneeName}
@@ -116,7 +118,7 @@ export function TaskRow({
       </td>
 
       {/* 시작일 */}
-      <td className="p-[12px_16px] border-b border-[#F4F4F5] text-[14px] w-[120px]">
+      <td className="p-[12px_16px] border-b border-border/50 text-[14px] w-[120px]">
         <DateCell
           value={task.startDate}
           onChange={(startDate) => onUpdate(task.id, { startDate })}
@@ -124,7 +126,7 @@ export function TaskRow({
       </td>
 
       {/* 마감일 */}
-      <td className="p-[12px_16px] border-b border-[#F4F4F5] text-[14px] w-[120px]">
+      <td className="p-[12px_16px] border-b border-border/50 text-[14px] w-[120px]">
         <DateCell
           value={task.endDate}
           onChange={(endDate) => onUpdate(task.id, { endDate })}
@@ -132,7 +134,7 @@ export function TaskRow({
       </td>
 
       {/* 진척도 */}
-      <td className="p-[12px_16px] border-b border-[#F4F4F5] text-[14px] w-[100px]">
+      <td className="p-[12px_16px] border-b border-border/50 text-[14px] w-[100px]">
         <ProgressCell
           value={task.progress}
           onChange={(progress) => onUpdate(task.id, { progress })}
@@ -154,7 +156,7 @@ function DateCell({
       type="date"
       value={value ?? ""}
       onChange={(e) => onChange(e.target.value || null)}
-      className="w-full bg-transparent py-0.5 px-1 rounded hover:bg-muted/50 cursor-pointer outline-none focus:border-ring border border-transparent focus:border-input"
+      className="w-full bg-transparent py-0.5 px-2 rounded-md text-[13px] hover:bg-muted/50 cursor-pointer outline-none border border-transparent focus:border-input focus:ring-1 focus:ring-ring/20 transition-all duration-150 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
     />
   );
 }
@@ -204,15 +206,15 @@ function ProgressCell({
         setTemp(String(value));
         setEditing(true);
       }}
-      className="flex items-center gap-2 cursor-pointer py-0.5 px-1 rounded hover:bg-[#F4F4F5] justify-end"
+      className="flex items-center gap-2 cursor-pointer py-0.5 px-1 rounded hover:bg-muted justify-end"
     >
-      <div className="w-[60px] h-[3px] rounded-full bg-[#F4F4F5] overflow-hidden">
+      <div className="w-20 h-1 rounded-full bg-muted overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all ${value >= 100 ? "bg-[#10B981]" : "bg-[#4F46E5]"}`}
+          className={`h-full rounded-full transition-all ${value >= 100 ? "bg-emerald-500" : "bg-primary"}`}
           style={{ width: `${value}%` }}
         />
       </div>
-      <span className="text-[12px] text-[#A1A1AA] w-7 text-right whitespace-nowrap">{value}%</span>
+      <span className="text-[12px] text-muted-foreground w-7 text-right whitespace-nowrap">{value}%</span>
     </div>
   );
 }

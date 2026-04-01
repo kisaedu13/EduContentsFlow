@@ -87,7 +87,7 @@ export function AnnouncementBoard({
   return (
     <div className="space-y-4">
       {/* 공지 작성 폼 */}
-      <form onSubmit={handleSubmit} className="rounded-lg border p-4 space-y-3">
+      <form onSubmit={handleSubmit} className="rounded-[10px] bg-card shadow-[var(--shadow-card)] p-4 space-y-3">
         <Input
           placeholder="공지 제목"
           value={title}
@@ -123,16 +123,16 @@ export function AnnouncementBoard({
         <div className="space-y-3">
           {optimisticAnnouncements.map((a) => (
             <div key={a.id} className={`flex gap-3 ${a.id.startsWith("temp-") ? "opacity-70" : ""}`}>
-              <Avatar className="size-8 shrink-0 mt-0.5">
-                <AvatarFallback className="bg-primary/10 text-primary text-base font-medium">
+              <Avatar className="size-7 shrink-0 mt-0.5">
+                <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
                   {a.authorName.slice(0, 1)}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1 rounded-lg border p-3 space-y-1.5">
+              <div className="flex-1 rounded-[10px] bg-card shadow-[var(--shadow-card)] p-3 space-y-1.5">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h4 className="font-medium text-base">{a.title}</h4>
-                    <p className="text-base text-muted-foreground">
+                    <h4 className="font-medium text-[15px]">{a.title}</h4>
+                    <p className="text-[13px] text-muted-foreground">
                       {a.authorName} &middot; {format(new Date(a.createdAt), "yyyy.MM.dd HH:mm")}
                     </p>
                   </div>
@@ -146,7 +146,7 @@ export function AnnouncementBoard({
                     </button>
                   )}
                 </div>
-                <p className="text-base whitespace-pre-wrap">{a.content}</p>
+                <p className="text-[15px] whitespace-pre-wrap">{a.content}</p>
               </div>
             </div>
           ))}

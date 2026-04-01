@@ -74,16 +74,16 @@ export default async function ProjectsPage() {
             return (
               <div
                 key={status}
-                className="flex flex-col rounded-xl border border-[#E4E4E7] bg-[#FAFAFA] min-h-[calc(100vh-200px)]"
+                className="flex flex-col rounded-xl border border-border bg-secondary/50 dark:bg-card/50 min-h-[400px]"
               >
                 {/* 컬럼 헤더 */}
-                <div className="flex items-center justify-between px-4 py-3.5 border-b border-[#E4E4E7]">
+                <div className="flex items-center justify-between px-4 py-3.5 border-b border-border">
                   <div className="flex items-center gap-2.5">
                     <span className={`size-2.5 rounded-full ${STATUS_DOT_COLORS[status]}`} />
                     <span className="text-[15px] font-semibold text-foreground">
                       {PROJECT_STATUS_LABELS[status]}
                     </span>
-                    <span className="flex items-center justify-center size-5 rounded-full bg-[#E4E4E7] text-[11px] font-semibold text-[#52525B]">
+                    <span className="flex items-center justify-center size-6 rounded-full bg-muted text-[12px] font-semibold text-muted-foreground">
                       {items.length}
                     </span>
                   </div>
@@ -95,7 +95,7 @@ export default async function ProjectsPage() {
                   ))}
                   {items.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-12 text-center flex-1">
-                      <FolderKanban className="size-8 text-[#D4D4D8] mb-2" />
+                      <FolderKanban className="size-8 text-muted-foreground/50 mb-2" />
                       <p className="text-[13px] text-muted-foreground">
                         프로젝트가 없습니다
                       </p>

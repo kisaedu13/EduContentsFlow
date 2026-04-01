@@ -155,16 +155,16 @@ export function TaskGanttChart({ tasks }: TaskGanttChartProps) {
         >
           <ChevronRight className="size-4" />
         </Button>
-        <span className="text-xs text-muted-foreground">
+        <span className="text-[13px] text-muted-foreground">
           {format(timelineStart, "yyyy.MM.dd")} ~ {format(addDays(timelineStart, VISIBLE_DAYS - 1), "yyyy.MM.dd")}
         </span>
       </div>
 
-      <div className="bg-white rounded-[10px] shadow-[var(--shadow-card)] overflow-x-auto border border-[#E4E4E7]">
-        <div style={{ minWidth: 240 + DAY_WIDTH * VISIBLE_DAYS }}>
+      <div className="bg-card rounded-[10px] shadow-[var(--shadow-card)] overflow-x-auto border border-border">
+        <div style={{ minWidth: 280 + DAY_WIDTH * VISIBLE_DAYS }}>
           {/* 월 헤더 */}
           <div className="flex border-b bg-muted/50">
-            <div className="w-[240px] shrink-0 border-r" />
+            <div className="w-[280px] shrink-0 border-r" />
             <div className="flex">
               {monthHeaders.map((m, i) => (
                 <div
@@ -180,7 +180,7 @@ export function TaskGanttChart({ tasks }: TaskGanttChartProps) {
 
           {/* 일 헤더 */}
           <div className="flex border-b bg-muted/30">
-            <div className="w-[240px] shrink-0 border-r px-3 py-1.5 text-xs font-medium text-muted-foreground">
+            <div className="w-[280px] shrink-0 border-r px-3 py-1.5 text-xs font-medium text-muted-foreground">
               업무
             </div>
             <div className="flex relative">
@@ -189,7 +189,7 @@ export function TaskGanttChart({ tasks }: TaskGanttChartProps) {
                   key={i}
                   className={cn(
                     "text-center text-xs py-1.5 border-r",
-                    isToday(d) && "bg-indigo-50 font-bold text-indigo-600",
+                    isToday(d) && "bg-indigo-50 dark:bg-indigo-500/10 font-bold text-indigo-600 dark:text-indigo-400",
                     isWeekend(d) && !isToday(d) && "bg-muted/50 text-muted-foreground/60",
                   )}
                   style={{ width: DAY_WIDTH }}
@@ -221,7 +221,7 @@ export function TaskGanttChart({ tasks }: TaskGanttChartProps) {
             return (
               <div key={task.id} className="flex border-b last:border-0 hover:bg-muted/20">
                 {/* 업무명 */}
-                <div className="w-[240px] shrink-0 border-r px-2 py-1.5 flex items-center gap-1" style={{ paddingLeft: 8 + task.depth * 16 }}>
+                <div className="w-[280px] shrink-0 border-r px-2 py-1.5 flex items-center gap-1" style={{ paddingLeft: 8 + task.depth * 16 }}>
                   {hasChild ? (
                     <button
                       type="button"
@@ -237,7 +237,7 @@ export function TaskGanttChart({ tasks }: TaskGanttChartProps) {
                   ) : (
                     <span className="w-4.5 flex-shrink-0" />
                   )}
-                  <span className="text-xs truncate">{task.name}</span>
+                  <span className="text-[13px] truncate">{task.name}</span>
                 </div>
 
                 {/* 타임라인 */}
@@ -248,7 +248,7 @@ export function TaskGanttChart({ tasks }: TaskGanttChartProps) {
                       key={i}
                       className={cn(
                         "border-r border-border/20",
-                        isToday(d) && "bg-indigo-50/50",
+                        isToday(d) && "bg-indigo-50/50 dark:bg-indigo-500/5",
                         isWeekend(d) && !isToday(d) && "bg-muted/30",
                       )}
                       style={{ width: DAY_WIDTH, height: 32 }}
@@ -258,7 +258,7 @@ export function TaskGanttChart({ tasks }: TaskGanttChartProps) {
                   {/* 오늘 선 */}
                   {showToday && (
                     <div
-                      className="absolute top-0 bottom-0 z-10 w-0.5 bg-indigo-600"
+                      className="absolute top-0 bottom-0 z-10 w-[3px] bg-primary/60"
                       style={{ left: todayOffset * DAY_WIDTH + DAY_WIDTH / 2 }}
                     />
                   )}
@@ -267,7 +267,7 @@ export function TaskGanttChart({ tasks }: TaskGanttChartProps) {
                   {barStyle && (
                     <div
                       className={cn(
-                        "absolute top-1.5 z-20 rounded-sm",
+                        "absolute top-1.5 z-20 rounded",
                         hasChild ? "h-2 top-3.5" : "h-5",
                         TASK_GANTT_BAR_COLORS[task.status as TaskStatusKey],
                       )}
@@ -279,7 +279,7 @@ export function TaskGanttChart({ tasks }: TaskGanttChartProps) {
                     >
                       {!hasChild && task.progress > 0 && (
                         <div
-                          className="h-full rounded-sm bg-black/15 dark:bg-white/15"
+                          className="h-full rounded bg-black/15 dark:bg-white/15"
                           style={{ width: `${task.progress}%` }}
                         />
                       )}

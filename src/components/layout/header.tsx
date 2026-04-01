@@ -18,14 +18,14 @@ export function Header({ title, breadcrumb }: HeaderProps) {
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="mr-2 h-4" />
       {breadcrumb && breadcrumb.length > 0 ? (
-        <nav className="flex items-center gap-1.5 text-[13px]">
+        <nav className="flex items-center gap-2 text-base">
           {breadcrumb.map((item, i) => (
-            <span key={i} className="flex items-center gap-1.5">
-              {i > 0 && <span className="text-[#A1A1AA]">›</span>}
+            <span key={i} className="flex items-center gap-2">
+              {i > 0 && <span className="text-muted-foreground/50">›</span>}
               {i < breadcrumb.length - 1 ? (
-                <span className="text-[#A1A1AA]">{item.label}</span>
+                <span className="text-muted-foreground/60">{item.label}</span>
               ) : (
-                <span className="text-[#71717A]">{item.label}</span>
+                <span className="font-medium text-foreground">{item.label}</span>
               )}
             </span>
           ))}

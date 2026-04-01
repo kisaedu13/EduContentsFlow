@@ -75,32 +75,32 @@ export default async function DashboardPage() {
   }
 
   const statCards = [
-    { label: "전체 프로젝트", value: totalProjects, icon: FolderKanban, color: "text-[#4F46E5]", bg: "bg-[#EEF2FF]", numColor: "" },
-    { label: "진행중", value: statusCounts.IN_PROGRESS, icon: PlayCircle, color: "text-[#3B82F6]", bg: "bg-[#EFF6FF]", numColor: "text-[#3B82F6]" },
-    { label: "완료", value: statusCounts.COMPLETED, icon: CheckCircle2, color: "text-[#10B981]", bg: "bg-[#ECFDF5]", numColor: "text-[#10B981]" },
-    { label: "보류", value: statusCounts.ON_HOLD, icon: PauseCircle, color: "text-[#6B7280]", bg: "bg-[#F3F4F6]", numColor: "" },
+    { label: "전체 프로젝트", value: totalProjects, icon: FolderKanban, color: "text-primary", bg: "bg-accent", numColor: "", borderColor: "border-t-primary" },
+    { label: "진행중", value: statusCounts.IN_PROGRESS, icon: PlayCircle, color: "text-[var(--status-progress-text)]", bg: "bg-[var(--status-progress-bg)]", numColor: "text-[var(--status-progress-text)]", borderColor: "border-t-[var(--status-progress-dot)]" },
+    { label: "완료", value: statusCounts.COMPLETED, icon: CheckCircle2, color: "text-[var(--status-done-text)]", bg: "bg-[var(--status-done-bg)]", numColor: "text-[var(--status-done-text)]", borderColor: "border-t-[var(--status-done-dot)]" },
+    { label: "보류", value: statusCounts.ON_HOLD, icon: PauseCircle, color: "text-[var(--status-hold-text)]", bg: "bg-[var(--status-hold-bg)]", numColor: "", borderColor: "border-t-[var(--status-hold-dot)]" },
   ];
 
   return (
     <>
       <Header breadcrumb={[{ label: "대시보드" }]} />
-      <main className="flex-1 p-7 space-y-7">
+      <main className="flex-1 p-6 space-y-6">
         <div>
-          <h1 className="text-[24px] font-bold tracking-tight">안녕하세요, {profile.name}님</h1>
-          <p className="text-[15px] text-[#71717A] mt-1">
+          <h1 className="text-[22px] font-bold tracking-tight" style={{ letterSpacing: '-0.3px' }}>안녕하세요, {profile.name}님</h1>
+          <p className="text-[15px] text-muted-foreground mt-1">
             교육 콘텐츠 제작 현황을 한눈에 확인하세요.
           </p>
         </div>
 
         {/* 통계 카드 */}
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {statCards.map((card) => (
-            <div key={card.label} className="bg-white rounded-[10px] p-[18px] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] transition-shadow duration-150">
-              <div className={cn("flex size-[34px] items-center justify-center rounded-lg mb-3", card.bg)}>
-                <card.icon className={cn("size-[16px]", card.color)} />
+            <div key={card.label} className={cn("bg-card rounded-[10px] p-[18px] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] transition-shadow duration-150 border-t-2", card.borderColor)}>
+              <div className={cn("flex size-10 items-center justify-center rounded-lg mb-3", card.bg)}>
+                <card.icon className={cn("size-5", card.color)} />
               </div>
-              <div className="text-[13px] font-medium text-[#71717A] mb-1">{card.label}</div>
-              <div className={cn("text-[28px] font-bold tracking-tight", card.numColor)}>{card.value}</div>
+              <div className="text-[13px] font-medium text-muted-foreground mb-1">{card.label}</div>
+              <div className={cn("text-[28px] font-bold tracking-tight", card.numColor)} style={{ letterSpacing: '-0.5px' }}>{card.value}</div>
             </div>
           ))}
         </div>
@@ -152,9 +152,9 @@ export default async function DashboardPage() {
                           <span>전체: {project._count.tasks}건</span>
                         </div>
                         {myTasks.length > 0 && (
-                          <div className="mt-2 h-1 rounded-full bg-zinc-100 overflow-hidden">
+                          <div className="mt-2 h-1.5 rounded-full bg-muted overflow-hidden">
                             <div
-                              className="h-full rounded-full bg-indigo-600 transition-all"
+                              className="h-full rounded-full bg-primary transition-all"
                               style={{ width: `${Math.round((myCompleted / myTasks.length) * 100)}%` }}
                             />
                           </div>

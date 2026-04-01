@@ -75,6 +75,7 @@ export function ProjectForm({ templates, projectId, initialData }: ProjectFormPr
   const selectedTemplate = templates?.find((t) => t.id === templateId);
 
   return (
+    <div className="bg-card rounded-xl p-7 shadow-[var(--shadow-card)]">
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
         <div className="space-y-2">
@@ -165,7 +166,7 @@ export function ProjectForm({ templates, projectId, initialData }: ProjectFormPr
 
       {error && <p className="text-sm text-destructive">{error}</p>}
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 pt-6 border-t border-border">
         <Button type="submit" disabled={saving}>
           {saving ? "저장 중..." : isEdit ? "수정" : "생성"}
         </Button>
@@ -174,5 +175,6 @@ export function ProjectForm({ templates, projectId, initialData }: ProjectFormPr
         </Button>
       </div>
     </form>
+    </div>
   );
 }

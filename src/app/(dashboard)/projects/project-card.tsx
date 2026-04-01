@@ -1,7 +1,15 @@
 import Link from "next/link";
 import { format } from "date-fns";
 import { CalendarDays, ListChecks } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { ProjectStatus } from "@/generated/prisma/client";
+
+const STATUS_CARD_BORDERS: Record<ProjectStatus, string> = {
+  PREPARING: "border-l-[3px] border-l-[var(--status-ready-dot)]",
+  IN_PROGRESS: "border-l-[3px] border-l-[var(--status-progress-dot)]",
+  COMPLETED: "border-l-[3px] border-l-[var(--status-done-dot)]",
+  ON_HOLD: "border-l-[3px] border-l-[var(--status-hold-dot)]",
+};
 
 interface ProjectCardProps {
   project: {
@@ -18,8 +26,11 @@ interface ProjectCardProps {
 export function ProjectBoardCard({ project }: ProjectCardProps) {
   return (
     <Link href={`/projects/${project.id}`} prefetch={false}>
-      <div className="rounded-lg bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-150 border border-[#F0F0F0]">
-        <h3 className="text-[14px] font-semibold text-foreground leading-snug">
+      <div className={cn(
+        "rounded-lg bg-card p-4 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-0.5 transition-all duration-150",
+        STATUS_CARD_BORDERS[project.status],
+      )}>
+        <h3 className="text-[15px] font-semibold text-foreground leading-snug">
           {project.name}
         </h3>
         {project.description && (
@@ -30,12 +41,12 @@ export function ProjectBoardCard({ project }: ProjectCardProps) {
         <div className="mt-3 flex items-center gap-3 text-[12px] text-muted-foreground">
           {project.startDate && (
             <span className="inline-flex items-center gap-1">
-              <CalendarDays className="size-3.5 text-[#A1A1AA]" />
+              <CalendarDays className="size-3.5" />
               {format(project.startDate, "yyyy.MM.dd")}
             </span>
           )}
           <span className="inline-flex items-center gap-1">
-            <ListChecks className="size-3.5 text-[#A1A1AA]" />
+            <ListChecks className="size-3.5" />
             업무 {project._count.tasks}개
           </span>
         </div>

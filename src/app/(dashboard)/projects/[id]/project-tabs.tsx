@@ -58,15 +58,15 @@ export function ProjectTabs({
     <Tabs defaultValue="tasks">
       <TabsList variant="line">
         <TabsTrigger value="tasks">
-          <ClipboardList className="size-4" />
+          <ClipboardList className="size-[18px]" />
           업무
         </TabsTrigger>
         <TabsTrigger value="schedule">
-          <Calendar className="size-4" />
+          <Calendar className="size-[18px]" />
           일정
         </TabsTrigger>
         <TabsTrigger value="announcements">
-          <Megaphone className="size-4" />
+          <Megaphone className="size-[18px]" />
           알림방
         </TabsTrigger>
       </TabsList>

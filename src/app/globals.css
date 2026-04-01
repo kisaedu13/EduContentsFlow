@@ -92,6 +92,25 @@
   --sidebar-accent-foreground: #FAFAFA;
   --sidebar-border: #27272A;
   --sidebar-ring: #4F46E5;
+  /* Status colors */
+  --status-ready-bg: #FFFBEB;
+  --status-ready-text: #B45309;
+  --status-ready-dot: #F59E0B;
+  --status-progress-bg: #EFF6FF;
+  --status-progress-text: #1D4ED8;
+  --status-progress-dot: #3B82F6;
+  --status-done-bg: #ECFDF5;
+  --status-done-text: #047857;
+  --status-done-dot: #10B981;
+  --status-hold-bg: #F3F4F6;
+  --status-hold-text: #374151;
+  --status-hold-dot: #6B7280;
+  --status-wait-bg: #F4F4F5;
+  --status-wait-text: #52525B;
+  --status-wait-dot: #A1A1AA;
+  --status-feedback-bg: #F5F3FF;
+  --status-feedback-text: #6D28D9;
+  --status-feedback-dot: #8B5CF6;
 }
 
 .dark {
@@ -126,6 +145,25 @@
   --sidebar-accent-foreground: #FAFAFA;
   --sidebar-border: #27272A;
   --sidebar-ring: #818CF8;
+  /* Status colors */
+  --status-ready-bg: rgba(245,158,11,0.12);
+  --status-ready-text: #FBBF24;
+  --status-ready-dot: #F59E0B;
+  --status-progress-bg: rgba(59,130,246,0.12);
+  --status-progress-text: #60A5FA;
+  --status-progress-dot: #3B82F6;
+  --status-done-bg: rgba(16,185,129,0.12);
+  --status-done-text: #34D399;
+  --status-done-dot: #10B981;
+  --status-hold-bg: rgba(107,114,128,0.12);
+  --status-hold-text: #9CA3AF;
+  --status-hold-dot: #6B7280;
+  --status-wait-bg: rgba(161,161,170,0.12);
+  --status-wait-text: #D4D4D8;
+  --status-wait-dot: #A1A1AA;
+  --status-feedback-bg: rgba(139,92,246,0.12);
+  --status-feedback-text: #A78BFA;
+  --status-feedback-dot: #8B5CF6;
 }
 
 @layer base {
