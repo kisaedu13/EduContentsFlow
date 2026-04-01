@@ -5,7 +5,7 @@ import {
   FolderKanban,
   PlayCircle,
   CheckCircle2,
-  PauseCircle,
+  Clock,
   ArrowRight,
 } from "lucide-react";
 import { Header } from "@/components/layout/header";
@@ -76,9 +76,9 @@ export default async function DashboardPage() {
 
   const statCards = [
     { label: "전체 프로젝트", value: totalProjects, icon: FolderKanban, color: "text-primary", bg: "bg-accent", numColor: "", borderColor: "border-t-primary" },
-    { label: "진행중", value: statusCounts.IN_PROGRESS, icon: PlayCircle, color: "text-[var(--status-progress-text)]", bg: "bg-[var(--status-progress-bg)]", numColor: "text-[var(--status-progress-text)]", borderColor: "border-t-[var(--status-progress-dot)]" },
+    { label: "준비 중", value: statusCounts.PREPARING, icon: Clock, color: "text-[var(--status-ready-text)]", bg: "bg-[var(--status-ready-bg)]", numColor: "text-[var(--status-ready-text)]", borderColor: "border-t-[var(--status-ready-dot)]" },
+    { label: "진행 중", value: statusCounts.IN_PROGRESS, icon: PlayCircle, color: "text-[var(--status-progress-text)]", bg: "bg-[var(--status-progress-bg)]", numColor: "text-[var(--status-progress-text)]", borderColor: "border-t-[var(--status-progress-dot)]" },
     { label: "완료", value: statusCounts.COMPLETED, icon: CheckCircle2, color: "text-[var(--status-done-text)]", bg: "bg-[var(--status-done-bg)]", numColor: "text-[var(--status-done-text)]", borderColor: "border-t-[var(--status-done-dot)]" },
-    { label: "보류", value: statusCounts.ON_HOLD, icon: PauseCircle, color: "text-[var(--status-hold-text)]", bg: "bg-[var(--status-hold-bg)]", numColor: "", borderColor: "border-t-[var(--status-hold-dot)]" },
   ];
 
   return (
@@ -99,8 +99,8 @@ export default async function DashboardPage() {
               <div className={cn("flex size-10 items-center justify-center rounded-lg mb-3", card.bg)}>
                 <card.icon className={cn("size-5", card.color)} />
               </div>
-              <div className="text-[13px] font-medium text-muted-foreground mb-1">{card.label}</div>
-              <div className={cn("text-[28px] font-bold tracking-tight", card.numColor)} style={{ letterSpacing: '-0.5px' }}>{card.value}</div>
+              <div className="text-[15px] font-medium text-muted-foreground mb-1">{card.label}</div>
+              <div className={cn("text-[34px] font-bold tracking-tight", card.numColor)} style={{ letterSpacing: '-0.5px' }}>{card.value}</div>
             </div>
           ))}
         </div>
